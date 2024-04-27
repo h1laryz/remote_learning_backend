@@ -6,4 +6,4 @@ is-testing: false
 
 server-port: 8080
 
-dbconnection: 'postgresql://remote_learning_backend_user:password@localhost:5432/remote_learning_backend_db_1'
+dbconnection: 'postgresql://user:password@localhost:5432/remote_learning_backend_db_1'

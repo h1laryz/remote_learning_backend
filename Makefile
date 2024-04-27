@@ -3,7 +3,7 @@ CMAKE_DEBUG_FLAGS ?= -DUSERVER_SANITIZE='addr ub'
 CMAKE_RELEASE_FLAGS ?=
 NPROCS ?= $(shell nproc)
 CLANG_FORMAT ?= clang-format
-DOCKER_COMPOSE ?= docker-compose
+DOCKER_COMPOSE ?= docker compose
 
 # NOTE: use Makefile.local to override the options defined above.
 -include Makefile.local
@@ -71,15 +71,12 @@ format:
 
 # Internal hidden targets that are used only in docker environment
 --in-docker-start-debug --in-docker-start-release: --in-docker-start-%: install-%
-	psql 'postgresql://user:password@service-postgres:5432/remote_learning_backend_db_1' -f ./postgresql/data/initial_data.sql
-	/home/user/.local/bin/remote_learning_backend \
-		--config /home/user/.local/etc/remote_learning_backend/static_config.yaml \
-		--config_vars /home/user/.local/etc/remote_learning_backend/config_vars.docker.yaml
+	./scripts/run_api_docker.sh
 
 # Build and run service in docker environment
-.PHONY: docker-start-service-debug docker-start-service-release
-docker-start-service-debug docker-start-service-release: docker-start-service-%:
-	$(DOCKER_COMPOSE) run -p 8080:8080 --rm remote_learning_backend-container make -- --in-docker-start-$*
+.PHONY: docker-start-debug docker-start-release
+docker-start-debug docker-start-release: docker-start-%:
+	$(DOCKER_COMPOSE) run -p 8080:8080 --rm api make -- --in-docker-start-$*
 
 # Start targets makefile in docker environment
 .PHONY: docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release
@@ -90,4 +87,4 @@ docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docke
 .PHONY: docker-clean-data
 docker-clean-data:
 	$(DOCKER_COMPOSE) down -v
-	rm -rf ./.pgdata
+	sudo rm -rf ./.pgdata

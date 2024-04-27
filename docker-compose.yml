@@ -1,26 +1,59 @@
-version: "2.3"
-
 services:
+    swagger-ui:
+        image: swaggerapi/swagger-ui
+        container_name: "swagger-ui"
+        ports:
+          - "8082:8080"
+        volumes:
+          - ./docs/swagger.json:/swagger.json
+        environment:
+          SWAGGER_JSON: /swagger.json
+
     postgres:
-        container_name: service-postgres
+        container_name: remote-learning-postgres
         image: postgres:12
         environment:
-          - POSTGRES_DB=remote_learning_backend_db_1
+          - POSTGRES_DB=postgres
           - POSTGRES_USER=user
           - POSTGRES_PASSWORD=password
         ports:
           - 5432
         volumes:
-          - ./postgresql/schemas:/docker-entrypoint-initdb.d
+          #- ./postgresql/schemas:/docker-entrypoint-initdb.d
           - ./.pgdata:/var/lib/postgresql/data
         networks:
           - postgres
 
-    remote_learning_backend-container:
+    pgadmin:
+        container_name: remote-learning-pgadmin
+        image: dpage/pgadmin4
+        environment:
+          - PGADMIN_DEFAULT_EMAIL=mail@domain.com
+          - PGADMIN_DEFAULT_PASSWORD=password
+        ports:
+          - 27016:80
+        depends_on:
+          - postgres
+        networks:
+          - postgres
+
+    flyway:
+        container_name: remote-learning-flyway
+        image: flyway/flyway
+        command: -url=jdbc:postgresql://remote-learning-postgres/postgres -user=user -password=password -schemas=flyway -connectRetries=60 -validateMigrationNaming=true migrate
+        volumes:
+          - ./postgresql/migrations/:/flyway/sql
+        depends_on:
+          - postgres
+        networks:
+          - postgres
+
+    api:
+        container_name: remote-learning-api
         image: ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
         privileged: true
         environment:
-          - POSTGRES_DB=remote_learning_backend_db_1
+          - POSTGRES_DB=remote_leaning_db_1
           - POSTGRES_USER=user
           - POSTGRES_PASSWORD=password
           - PREFIX=${PREFIX:-~/.local}
@@ -30,11 +63,12 @@ services:
           - .:/remote_learning_backend:rw
           - ${TC_CORES_DIR:-./.cores}:/cores:rw
         ports:
-          - 8080:8080
+          - "8080:8080"
         working_dir: /remote_learning_backend
         entrypoint:
-          - ./tests/run_as_user.sh
+          - ./scripts/run_as_user.sh
         depends_on:
+          - flyway
           - postgres
         networks:
           - postgres
