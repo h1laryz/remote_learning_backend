@@ -4,6 +4,7 @@ CMAKE_RELEASE_FLAGS ?=
 NPROCS ?= $(shell nproc)
 CLANG_FORMAT ?= clang-format
 DOCKER_COMPOSE ?= docker compose
+SHELL := /bin/bash
 
 # NOTE: use Makefile.local to override the options defined above.
 -include Makefile.local
@@ -69,19 +70,16 @@ format:
 	find src -name '*pp' -type f | xargs $(CLANG_FORMAT) -i
 	find tests -name '*.py' -type f | xargs autopep8 -i
 
-# Internal hidden targets that are used only in docker environment
---in-docker-start-debug --in-docker-start-release: --in-docker-start-%: install-%
-	./scripts/run_api_docker.sh
 
 # Build and run service in docker environment
 .PHONY: docker-start-debug docker-start-release
 docker-start-debug docker-start-release: docker-start-%:
-	$(DOCKER_COMPOSE) run -p 8080:8080 --rm api make -- --in-docker-start-$*
+	REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION=$* $(DOCKER_COMPOSE) up
 
 # Start targets makefile in docker environment
 .PHONY: docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release
 docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release: docker-%:
-	$(DOCKER_COMPOSE) run --rm remote_learning_backend-container make $*
+	$(DOCKER_COMPOSE) run --rm remote-learning-backend-container make $*
 
 # Stop docker container and remove PG data
 .PHONY: docker-clean-data

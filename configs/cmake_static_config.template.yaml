@@ -2,24 +2,24 @@ components_manager:
     task_processors:                  # Task processor is an executor for coroutine tasks
 
         main-task-processor:          # Make a task processor for CPU-bound couroutine tasks.
-            worker_threads: $ENV{SLOTCASTA_API_WORKER_THREADS}         # Process tasks in 4 threads.
+            worker_threads: $ENV{REMOTE_LEARNING_BACKEND_WORKER_THREADS}         # Process tasks in 4 threads.
 
         fs-task-processor:            # Make a separate task processor for filesystem bound tasks.
-            worker_threads: $ENV{SLOTCASTA_API_WORKER_FS_THREADS}
+            worker_threads: $ENV{REMOTE_LEARNING_BACKEND_WORKER_FS_THREADS}
 
     default_task_processor: main-task-processor
 
     components:                       # Configuring components that were registered via component_list
         server:
             listener:                 # configuring the main listening socket...
-                port: $ENV{SLOTCASTA_API_SERVER_PORT}            # ...to listen on this port and...
+                port: $ENV{REMOTE_LEARNING_BACKEND_SERVER_PORT}            # ...to listen on this port and...
                 task_processor: main-task-processor    # ...process incoming requests on this task processor.
         logging:
             fs-task-processor: fs-task-processor
             loggers:
                 default:
                     file_path: '@stdout'
-                    level: $ENV{SLOTCASTA_API_LOGGER_LEVEL}
+                    level: $ENV{REMOTE_LEARNING_BACKEND_LOGGER_LEVEL}
                     overflow_behavior: discard  # Drop logs if the system is too busy to write them down.
 
         # Dynamic config options. Cache is disabled, updates are disabled.
@@ -35,11 +35,11 @@ components_manager:
         testsuite-support: {}
 
         http-client:
-            load-enabled: $ENV{SLOTCASTA_API_IS_TESTING}
+            load-enabled: $ENV{REMOTE_LEARNING_BACKEND_IS_TESTING}
             fs-task-processor: fs-task-processor
 
         tests-control:
-            load-enabled: $ENV{SLOTCASTA_API_IS_TESTING}
+            load-enabled: $ENV{REMOTE_LEARNING_BACKEND_IS_TESTING}
             path: /tests/{action}
             method: POST
             task_processor: main-task-processor
@@ -56,7 +56,7 @@ components_manager:
             task_processor: main-task-processor  # Run it on CPU bound task processor
 
         postgres-db-1:
-            dbconnection: postgresql://$ENV{SLOTCASTA_API_DB_USER}:$ENV{SLOTCASTA_API_DB_PASSWORD}@$ENV{SLOTCASTA_API_POSTGRES_SERVICE_NAME}:$ENV{SLOTCASTA_API_DB_PORT}/$ENV{SLOTCASTA_API_DB_NAME}
+            dbconnection: postgresql://$ENV{REMOTE_LEARNING_BACKEND_DB_USER}:$ENV{REMOTE_LEARNING_BACKEND_DB_PASSWORD}@$ENV{REMOTE_LEARNING_BACKEND_POSTGRES_SERVICE_NAME}:$ENV{REMOTE_LEARNING_BACKEND_DB_PORT}/$ENV{REMOTE_LEARNING_BACKEND_DB_NAME}
             blocking_task_processor: fs-task-processor
             dns_resolver: async
             sync-start: false

@@ -5,11 +5,16 @@
 
 #include <userver/components/component_list.hpp>
 
-namespace remote_learning_backend {
+namespace remote_learning_backend
+{
 
-enum class UserType { kFirstTime, kKnown };
-std::string SayHelloTo(std::string_view name, UserType type);
+enum class UserType
+{
+    kFirstTime,
+    kKnown
+};
+std::string SayHelloTo( std::string_view name, UserType type );
 
-void AppendHello(userver::components::ComponentList& component_list);
+void AppendHello( userver::components::ComponentList& component_list );
 
-}  // namespace remote_learning_backend
+} // namespace remote_learning_backend
