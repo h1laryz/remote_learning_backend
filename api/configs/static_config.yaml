@@ -59,10 +59,16 @@ components_manager:
         #    pgcomponent: auth-database
         #    update-interval: 10s
 
+        default-server-middleware-pipeline-builder:
+            append:
+                - cors-middleware
+
         handler-login:
             path: /v1/login
             task_processor: main-task-processor
-            method: POST
+            method: POST,OPTIONS
+            #middlewares:
+            #    pipeline-builder: cors-pipeline-builder
 #            auth: # Authorization config for this handler
 #                types:
 #                    - bearer  # Authorization type that was specified in main()
@@ -72,7 +78,9 @@ components_manager:
         handler-register:
             path: /v1/register
             task_processor: main-task-processor
-            method: POST
+            method: POST,OPTIONS
+            #middlewares:
+            #    pipeline-builder: cors-pipeline-builder
 
         #postgres-db-1:
         #    dbconnection: $dbconnection

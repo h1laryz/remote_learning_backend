@@ -7,6 +7,7 @@
 #include <userver/utils/daemon_run.hpp>
 
 #include "api/handlers/login.hpp"
+#include "api/handlers/pipelines/CorsPipelineBuilder.hpp"
 #include "api/handlers/register.hpp"
 #include "api/pg/auth/checker_factory.hpp"
 #include "api/pg/auth/user_info_cache.hpp"
@@ -17,16 +18,21 @@ int main( int argc, const char* const argv[] )
         "bearer",
         std::make_unique< rl::pg::auth::CheckerFactory >() );
 
-    const auto component_list = userver::components::MinimalServerComponentList()
-                                    //.Append< rl::pg::auth::AuthCache >()
-                                    .Append< userver::components::Postgres >( "auth-database" )
-                                    .Append< rl::handlers::Login >()
-                                    .Append< rl::handlers::Register >()
-                                    .Append< userver::components::TestsuiteSupport >()
-                                    .Append< userver::clients::dns::Component >()
-                                    .Append< userver::components::HttpClient >()
-                                    .Append< userver::server::handlers::TestsControl >()
-                                    .Append< userver::server::handlers::Ping >();
+    const auto component_list =
+        userver::components::MinimalServerComponentList()
+            //.Append< rl::pg::auth::AuthCache >()
+            //.Append<rl::handlers::pipelines::CorsPipelineBuilder>("cors-pipeline-builder")
+            .Append< userver::components::Postgres >( "auth-database" )
+            .Append< rl::handlers::Login >()
+            .Append< rl::handlers::Register >()
+            .Append< userver::components::TestsuiteSupport >()
+            .Append< userver::clients::dns::Component >()
+            .Append< userver::components::HttpClient >()
+            .Append< userver::server::handlers::TestsControl >()
+            .Append< userver::server::handlers::Ping >()
+            .Append< rl::handlers::middlewares::MiddlewareCorsFactory >()
+
+        ;
 
     return userver::utils::DaemonMain( argc, argv, component_list );
 }

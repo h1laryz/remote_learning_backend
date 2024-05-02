@@ -154,7 +154,7 @@ std::optional< int > Login::getUserIdViaMailLogin( const std::string& mail,
 {
     const auto pg_query =
         "SELECT id FROM auth_schema.users "
-        "WHERE mail = $1 "
+        "WHERE email = $1 "
         "AND password = $2;";
 
     const auto result{ pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,

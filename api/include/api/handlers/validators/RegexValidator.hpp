@@ -76,10 +76,10 @@ private:
 };
 
 userver::utils::regex RegexValidator::regex_password_{
-    R"(^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$)"
+    R"(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$)"
 };
 userver::utils::regex RegexValidator::regex_email_{
-    R"(\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)"
+    R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})"
 };
 userver::utils::regex RegexValidator::regex_username_{ R"(^[a-zA-Z0-9_]+$)" };
 userver::utils::regex RegexValidator::regex_last_name_{ R"(^[a-zA-Z'-]+$)" };

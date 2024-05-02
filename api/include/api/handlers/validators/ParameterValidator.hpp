@@ -18,13 +18,13 @@ public:
     {
         for ( const auto& param : params )
         {
-            if ( !request_body.HasMember( param ) || request_body[ param ].IsEmpty() )
+            if ( !request_body.HasMember( param ) )
             {
                 userver::formats::json::ValueBuilder result;
                 result[ "error" ] =
                     magic_enum::enum_name( errors::Error::kRequiredFieldIsNotPassed );
-                result[ "description" ] = fmt::format( "Body parameter {} is required", kUsername );
-                return result;
+                result[ "description" ] = fmt::format( "Body parameter {} is required", param );
+                return result.ExtractValue();
             }
         }
 

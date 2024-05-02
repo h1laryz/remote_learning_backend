@@ -90,7 +90,7 @@ std::string Register::HandleRequestThrow( const userver::server::http::HttpReque
     if ( !validators::RegexValidator::isValidPassword( password ) )
     {
         userver::formats::json::ValueBuilder response;
-        response[ "error" ] = "emailRegexError";
+        response[ "error" ] = "passwordRegexError";
 
         request.SetResponseStatus( userver::server::http::HttpStatus::kBadRequest );
         return userver::formats::json::ToString( response.ExtractValue() );
@@ -117,7 +117,7 @@ std::string Register::HandleRequestThrow( const userver::server::http::HttpReque
     }
 
     const auto& surname{ request_body[ kSurname ].As< std::string >() };
-    if ( !validators::RegexValidator::isValidLastName( surname ) )
+    if ( !validators::RegexValidator::isValidSurname( surname ) )
     {
         userver::formats::json::ValueBuilder response;
         response[ "error" ] = "surnameRegexError";
@@ -136,68 +136,77 @@ std::string Register::HandleRequestThrow( const userver::server::http::HttpReque
         return userver::formats::json::ToString( response.ExtractValue() );
     }
 
-    auto trx{ pg_cluster_->Begin( "sample_transaction_insert_key_value",
-                                  userver::storages::postgres::ClusterHostType::kMaster,
-                                  {} ) };
-
-    if ( middle_name.empty() )
+    if ( !registerImpl( surname, last_name, middle_name, password, username, mail, date_of_birth ) )
     {
-        const auto pg_query_register{
-            "INSERT INTO auth_schema.users(username, mail, last_name, surname, middle_name, "
-            "password, date_of_birth) "
-            "VALUES ($1, $2, $3, $4, $5, $6, $7) "
-            "RETURNING id;"
-        };
+        userver::formats::json::ValueBuilder response;
+        response[ "error" ] = "internalServerError";
 
-        auto trx_result{ pg_cluster_->Execute(
-            userver::storages::postgres::ClusterHostType::kMaster,
-            pg_query_register,
-            username,
-            mail,
-            userver::crypto::hash::Sha512( password ) ) };
-
-        if ( trx_result.IsEmpty() )
-        {
-            request.SetResponseStatus( userver::server::http::HttpStatus::kBadRequest );
-            return {};
-        }
+        request.SetResponseStatus( userver::server::http::HttpStatus::kInternalServerError );
+        return userver::formats::json::ToString( response.ExtractValue() );
     }
-    else
-    {
-        const auto pg_query_register{
-            "INSERT INTO auth_schema.users(username, mail, last_name, surname, password, "
-            "date_of_birth) "
-            "VALUES ($1, $2, $3, $4, $5, $6) "
-            "RETURNING id;"
-        };
-    }
-
-    const auto user_id{ trx_result.AsSingleRow< int >() };
-
-    const auto token = jwt::create()
-                           .set_type( "JWT" )
-                           .set_id( "rsa-create-example" )
-                           .set_issued_now()
-                           .set_expires_in( std::chrono::seconds{ 36000 } )
-                           .set_payload_claim( "sample", jwt::claim( std::string{ "test" } ) )
-                           .sign( jwt::algorithm::hs256( "secret" ) );
-
-    const auto pg_query_save_token{
-        "INSERT INTO auth_schema.tokens(token, user_id) "
-        "VALUES ($1, $2);"
-    };
-
-    trx_result = pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
-                                       pg_query_save_token,
-                                       token,
-                                       user_id );
-
-    trx.Commit();
 
     userver::formats::json::ValueBuilder response;
-    response[ "token" ] = token;
-
+    response[ "status" ] = "registerSuccess";
     return userver::formats::json::ToString( response.ExtractValue() );
+}
+
+bool Register::registerImpl( std::string_view surname,
+                             std::string_view last_name,
+                             std::string_view middle_name,
+                             std::string_view password,
+                             std::string_view username,
+                             std::string_view mail,
+                             std::string_view date_of_birth ) const
+{
+    if ( !middle_name.empty() )
+    {
+        const auto query{
+            "INSERT INTO auth_schema.users(username, email, last_name, surname, middle_name, "
+            "password, date_of_birth) "
+            "VALUES ($1, $2, $3, $4, $5, $6, $7::DATE) "
+            "RETURNING id;"
+        };
+
+        auto result{ pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                           query,
+                                           username,
+                                           mail,
+                                           last_name,
+                                           surname,
+                                           middle_name,
+                                           userver::crypto::hash::Sha512( password ),
+                                           date_of_birth ) };
+
+        if ( result.IsEmpty() )
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    const auto query{
+        "INSERT INTO auth_schema.users(username, email, last_name, surname, password, "
+        "date_of_birth) "
+        "VALUES ($1, $2, $3, $4, $5, $6::DATE) "
+        "RETURNING id;"
+    };
+
+    auto result{ pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                       query,
+                                       username,
+                                       mail,
+                                       last_name,
+                                       surname,
+                                       userver::crypto::hash::Sha512( password ),
+                                       date_of_birth ) };
+
+    if ( result.IsEmpty() )
+    {
+        return false;
+    }
+
+    return true;
 }
 
 bool Register::isUsernameFree( std::string_view username ) const

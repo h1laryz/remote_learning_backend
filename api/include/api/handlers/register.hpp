@@ -27,6 +27,14 @@ public:
     HandleRequestThrow( const userver::server::http::HttpRequest& request,
                         userver::server::request::RequestContext& request_context ) const override;
 
+    [[nodiscard]] bool registerImpl( std::string_view surname,
+                                     std::string_view last_name,
+                                     std::string_view middle_name,
+                                     std::string_view password,
+                                     std::string_view username,
+                                     std::string_view email,
+                                     std::string_view date_of_birth ) const;
+
 private:
     [[nodiscard]] bool isUsernameFree( std::string_view username ) const;
     [[nodiscard]] bool isEmailFree( std::string_view email ) const;
