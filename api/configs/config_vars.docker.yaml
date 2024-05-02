@@ -7,3 +7,5 @@ is-testing: false
 server-port: 8080
 
 dbconnection: 'postgresql://user:password@remote-learning-postgres:5432/postgres'
+
+jwt-secret: 'secret'
