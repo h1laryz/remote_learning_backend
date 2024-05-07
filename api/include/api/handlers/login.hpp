@@ -27,7 +27,7 @@ public:
 
     std::optional< int > getUserIdViaMailLogin( const std::string& mail,
                                                 const std::string& password ) const;
-    std::optional< int > getUserIdViaUsernameLogin( const std::string& username,
+    std::optional< int > getUserIdViaDb( const std::string& emailOrUsername,
                                                     const std::string& password ) const;
 
 private:

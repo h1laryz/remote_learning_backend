@@ -1,16 +1,23 @@
 cmake_minimum_required(VERSION 3.22 FATAL_ERROR)
-project(remote_learning_backend_api CXX)
+project(remote_learning_backend_chat CXX)
 
 find_package(jwt-cpp CONFIG REQUIRED)
 
 # Adding userver dependency
-find_package(userver REQUIRED COMPONENTS core postgresql)
-find_package(AWSSDK REQUIRED COMPONENTS core s3)
+#find_package(userver REQUIRED COMPONENTS core postgresql REQU)
+# Enable userver libraries that are needed in this project
+set(USERVER_FEATURE_POSTGRESQL ON CACHE BOOL "" FORCE)
+
+# Compatibility mode: some systems don't support these features
+set(USERVER_FEATURE_CRYPTOPP_BLAKE2 OFF CACHE BOOL "" FORCE)
+set(USERVER_FEATURE_GRPC_CHANNELZ OFF CACHE BOOL "" FORCE)
+set(USERVER_FEATURE_REDIS_HI_MALLOC ON CACHE BOOL "" FORCE)
+
 
 userver_setup_environment()
 
 # Common sources
-file(GLOB_RECURSE OBJ_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/api/*.cpp)
+file(GLOB_RECURSE OBJ_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/chat/*.cpp)
 add_library(${PROJECT_NAME}_objs OBJECT ${OBJ_SRC})
 target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql jwt-cpp::jwt-cpp)
 target_include_directories(${PROJECT_NAME}_objs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)

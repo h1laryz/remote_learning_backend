@@ -48,7 +48,7 @@ services:
           - postgres
 
     api:
-        container_name: remote-learning-api
+        container_name: remote-learning-chat
         image: ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
         privileged: true
         environment:
@@ -71,8 +71,21 @@ services:
         depends_on:
           - flyway
           - postgres
+          - localstack
         networks:
           - postgres
+
+    localstack:
+      container_name: "remote-learning-s3"
+      image: localstack/localstack:s3-latest
+      ports:
+        - "4566:4566"
+      environment:
+        - DEBUG=${REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION:-0}
+        - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+      volumes:
+        - ".s3/:/var/lib/localstack"
+        - "/var/run/docker.sock:/var/run/docker.sock"
 
 networks:
     postgres:

@@ -5,9 +5,6 @@
 #include <userver/server/handlers/tests_control.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 #include <userver/utils/daemon_run.hpp>
-#include <aws/core/Aws.h>
-#include <aws/s3/S3Client.h>
-#include <aws/s3/model/PutObjectRequest.h>
 
 #include "api/handlers/login.hpp"
 #include "api/handlers/pipelines/CorsPipelineBuilder.hpp"
@@ -34,8 +31,7 @@ int main( int argc, const char* const argv[] )
             .Append< userver::server::handlers::TestsControl >()
             .Append< userver::server::handlers::Ping >()
             .Append< rl::handlers::middlewares::MiddlewareCorsFactory >()
-
-        ;
+                ;
 
     return userver::utils::DaemonMain( argc, argv, component_list );
 }
