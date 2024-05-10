@@ -12,23 +12,18 @@
 
 namespace rl::handlers
 {
-class Login final : public userver::server::handlers::HttpHandlerBase
+class SubjectGroupAdd final : public userver::server::handlers::HttpHandlerBase
 {
 public:
-    Login( const userver::components::ComponentConfig& config,
-           const userver::components::ComponentContext& context );
+    SubjectGroupAdd( const userver::components::ComponentConfig& config,
+                     const userver::components::ComponentContext& context );
 
 public:
-    static constexpr std::string_view kName = "handler-login";
+    static constexpr std::string_view kName = "handler-teacher-add";
     using HttpHandlerBase::HttpHandlerBase;
 
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,
                                     userver::server::request::RequestContext& ctx ) const override;
-
-    std::optional< int > getUserIdViaMailLogin( const std::string& mail,
-                                                const std::string& password ) const;
-    std::optional< int > getUserIdViaDb( const std::string& emailOrUsername,
-                                         const std::string& password ) const;
 
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;

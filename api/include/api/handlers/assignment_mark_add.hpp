@@ -10,27 +10,25 @@
 #include <userver/server/request/request_context.hpp>
 #include <userver/storages/postgres/postgres.hpp>
 
+#include "api/aws/s3.hpp"
+
 namespace rl::handlers
 {
-class Login final : public userver::server::handlers::HttpHandlerBase
+class AssignmentMarkAdd final : public userver::server::handlers::HttpHandlerBase
 {
 public:
-    Login( const userver::components::ComponentConfig& config,
-           const userver::components::ComponentContext& context );
+    AssignmentMarkAdd( const userver::components::ComponentConfig& config,
+                       const userver::components::ComponentContext& context );
 
 public:
-    static constexpr std::string_view kName = "handler-login";
+    static constexpr std::string_view kName = "handler-assignment-mark-add";
     using HttpHandlerBase::HttpHandlerBase;
 
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,
                                     userver::server::request::RequestContext& ctx ) const override;
 
-    std::optional< int > getUserIdViaMailLogin( const std::string& mail,
-                                                const std::string& password ) const;
-    std::optional< int > getUserIdViaDb( const std::string& emailOrUsername,
-                                         const std::string& password ) const;
-
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
+    aws::s3::S3Homework s3_homework_;
 };
 } // namespace rl::handlers

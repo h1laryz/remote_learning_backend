@@ -74,19 +74,26 @@ services:
           - localstack
         networks:
           - postgres
+          - localstack
 
     localstack:
-      container_name: "remote-learning-s3"
-      image: localstack/localstack:s3-latest
+      container_name: remote-learning-localstack
+      image: localstack/localstack:2.2.0
+      networks:
+        - localstack
       ports:
         - "4566:4566"
       environment:
-        - DEBUG=${REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION:-0}
-        - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
+        - LAMBDA_DOCKER_NETWORK=bridge
+        - AWS_DEFAULT_REGION=us-east-1
+        - DEBUG=1
+        - DOCKER_HOST=unix:///var/run/docker.sock
       volumes:
-        - ".s3/:/var/lib/localstack"
-        - "/var/run/docker.sock:/var/run/docker.sock"
-
+        - ./aws/:/etc/localstack/init/ready.d/
+        - /var/run/docker.sock:/var/run/docker.sock
+        - ./.localstack:/var/lib/localstack
 networks:
     postgres:
         driver: bridge
+    localstack:
+      driver: bridge

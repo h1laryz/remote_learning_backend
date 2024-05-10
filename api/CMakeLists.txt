@@ -12,7 +12,7 @@ userver_setup_environment()
 # Common sources
 file(GLOB_RECURSE OBJ_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/api/*.cpp)
 add_library(${PROJECT_NAME}_objs OBJECT ${OBJ_SRC})
-target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql jwt-cpp::jwt-cpp)
+target_link_libraries(${PROJECT_NAME}_objs PUBLIC userver::postgresql jwt-cpp::jwt-cpp ${AWSSDK_LINK_LIBRARIES})
 target_include_directories(${PROJECT_NAME}_objs PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # The Service

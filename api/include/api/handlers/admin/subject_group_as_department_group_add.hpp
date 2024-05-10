@@ -10,18 +10,16 @@
 #include <userver/server/request/request_context.hpp>
 #include <userver/storages/postgres/postgres.hpp>
 
-#include "api/aws/s3.hpp"
-
 namespace rl::handlers
 {
-class Homework final : public userver::server::handlers::HttpHandlerBase
+class SubjectGroupAsDepartmentGroupAdd final : public userver::server::handlers::HttpHandlerBase
 {
 public:
-    Homework( const userver::components::ComponentConfig& config,
-           const userver::components::ComponentContext& context );
+    SubjectGroupAsDepartmentGroupAdd( const userver::components::ComponentConfig& config,
+                                      const userver::components::ComponentContext& context );
 
 public:
-    static constexpr std::string_view kName = "handler-homework";
+    static constexpr std::string_view kName = "handler-teacher-add";
     using HttpHandlerBase::HttpHandlerBase;
 
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,
@@ -29,6 +27,5 @@ public:
 
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
-    aws::s3::S3Homework s3_homework_;
 };
 } // namespace rl::handlers

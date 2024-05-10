@@ -4,7 +4,7 @@
         "AllowedHeaders": ["*"],
         "AllowedMethods": ["GET", "POST", "PUT"],
         "AllowedOrigins": ["*"],
-        "ExposeHeaders": ["ETag"]
+        "ExposeHeaders": ["ETag", "Content-Type"]
       }
     ]
   }

@@ -13,7 +13,7 @@ namespace
 constexpr std::string_view kUsername{ "username" };
 constexpr std::string_view kPassword{ "password" };
 constexpr std::string_view kMail{ "email" };
-constexpr std::string_view kEmailOrUsername {  "emailOrUsername"};
+constexpr std::string_view kEmailOrUsername{ "emailOrUsername" };
 } // namespace
 
 namespace rl::handlers
@@ -76,8 +76,7 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
         request.SetResponseStatus( userver::server::http::HttpStatus::kUnauthorized );
 
         userver::formats::json::ValueBuilder response;
-        response[ "description" ] =
-            fmt::format( R"(Invalid "{}" or "{}")", kUsername, kPassword );
+        response[ "description" ] = fmt::format( R"(Invalid "{}" or "{}")", kUsername, kPassword );
 
         return userver::formats::json::ToString( response.ExtractValue() );
     }
@@ -109,7 +108,7 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
 }
 
 std::optional< int > Login::getUserIdViaDb( const std::string& emailOrUsername,
-                                                       const std::string& password ) const
+                                            const std::string& password ) const
 {
     const auto pg_query =
         "SELECT id FROM auth_schema.users "
