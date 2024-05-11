@@ -69,8 +69,6 @@ install: install-release
 format:
 	find api -name '*pp' -type f | xargs $(CLANG_FORMAT) -i
 	find tests -name '*.py' -type f | xargs autopep8 -i
-	find postgresql -name "*.sql" -type f | xargs sqlformat
-
 
 # Build and run service in docker environment
 .PHONY: docker-start-debug docker-start-release

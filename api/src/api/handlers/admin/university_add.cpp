@@ -38,7 +38,7 @@ std::string UniversityAdd::HandleRequestThrow( const userver::server::http::Http
 
     const auto& university_name{ request_body[ kUniversityName ].As< std::string >() };
 
-    // TODO: add jwt
+    // TODO: addAssignment jwt
 
     const pg::PgDao pgDao{ pg_cluster_ };
     auto result{ pgDao.createUniversity( university_name ) };

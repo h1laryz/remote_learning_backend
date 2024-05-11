@@ -82,17 +82,100 @@ components_manager:
             #middlewares:
             #    pipeline-builder: cors-pipeline-builder
 
-        handler-homework-create:
-            path: /v1/homework/create
-            method: POST,OPTIONS
+        handler-department-add:
+            path: /v1/admin/department/add
             task_processor: main-task-processor
-
-        handler-university-create:
-            path: /v1/homework/create
             method: POST,OPTIONS
+
+        handler-department-group-add:
+            path: /v1/admin/department/group/add
             task_processor: main-task-processor
+            method: POST,OPTIONS
 
+        handler-faculty-add:
+            path: /v1/admin/faculty/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
 
+        handler-student-add:
+            path: /v1/admin/student/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-teacher-student-to-existing-subject-group-add:
+            path: /v1/admin/department/group/add_student
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-subject-add:
+            path: /v1/admin/department/subject/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-subject-group-add:
+            path: /v1/admin/subject/group/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-subject-group-as-department-group-add:
+            path: /v1/admin/subject/group/department_group_add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-teacher-add:
+            path: /v1/admin/teacher/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-teacher-add-to-faculty:
+            path: /v1/admin/faculty/add_teacher
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-teacher-rank-add:
+            path: /v1/admin/teacher/rank/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-university-add:
+            path: /v1/admin/university/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-assignment-add:
+            path: /v1/admin/subject/assignment/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-assignment-content-get:
+            path: /v1/admin/subject/assignment/{s3_key}
+            task_processor: main-task-processor
+            method: GET,OPTIONS
+
+        handler-assignment-mark-add:
+            path: /v1/admin/subject/assignment/mark/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-assignment-solution-add:
+            path: /v1/admin/subject/assignment/solution/add
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
+        handler-assignment-solution-content-get:
+            path: /v1/admin/subject/assignment/solution/{s3_key}
+            task_processor: main-task-processor
+            method: GET,OPTIONS
+
+        handler-student-assignments-get:
+            path: /v1/admin/subject/assignments/student
+            task_processor: main-task-processor
+            method: GET,OPTIONS
+
+        handler-teacher-assignments-get:
+            path: /v1/admin/subject/assignments/teacher
+            task_processor: main-task-processor
+            method: GET,OPTIONS
 
         #postgres-db-1:
         #    dbconnection: $dbconnection

@@ -16,7 +16,7 @@ public:
     {
         // We could do any kind of transformation here.
         // For the sake of example (and what we assume to be the most common case),
-        // we just add some middleware to the pipeline.
+        // we just addAssignment some middleware to the pipeline.
         auto pipeline = server_middleware_pipeline;
         pipeline.emplace_back( middlewares::MiddlewareCors::kName );
         return pipeline;

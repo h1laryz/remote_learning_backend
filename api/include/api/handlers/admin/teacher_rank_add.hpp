@@ -19,7 +19,7 @@ public:
                     const userver::components::ComponentContext& context );
 
 public:
-    static constexpr std::string_view kName = "handler-teacher-rank-create";
+    static constexpr std::string_view kName = "handler-teacher-rank-add";
     using HttpHandlerBase::HttpHandlerBase;
 
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,

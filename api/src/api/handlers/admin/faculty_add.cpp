@@ -1,4 +1,4 @@
-#include "api/handlers/admin/faculty_create.hpp"
+#include "api/handlers/admin/faculty_add.hpp"
 
 #include <userver/http/common_headers.hpp>
 
@@ -13,8 +13,8 @@ constexpr std::string_view kUniversityName{ "university_name" };
 
 namespace rl::handlers
 {
-FacultyCreate::FacultyCreate( const userver::components::ComponentConfig& config,
-                              const userver::components::ComponentContext& context )
+FacultyAdd::FacultyAdd( const userver::components::ComponentConfig& config,
+                        const userver::components::ComponentContext& context )
     : userver::server::handlers::HttpHandlerBase{ config, context }
     , pg_cluster_{
         context.FindComponent< userver::components::Postgres >( "auth-database" ).GetCluster()
@@ -22,8 +22,8 @@ FacultyCreate::FacultyCreate( const userver::components::ComponentConfig& config
 {
 }
 
-std::string FacultyCreate::HandleRequestThrow( const userver::server::http::HttpRequest& request,
-                                               userver::server::request::RequestContext& ) const
+std::string FacultyAdd::HandleRequestThrow( const userver::server::http::HttpRequest& request,
+                                            userver::server::request::RequestContext& ) const
 {
     const auto request_body{ userver::formats::json::FromString( request.RequestBody() ) };
 

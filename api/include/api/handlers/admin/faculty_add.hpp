@@ -12,14 +12,14 @@
 
 namespace rl::handlers
 {
-class SubjectGroupAsDepartmentGroupAdd final : public userver::server::handlers::HttpHandlerBase
+class FacultyAdd final : public userver::server::handlers::HttpHandlerBase
 {
 public:
-    SubjectGroupAsDepartmentGroupAdd( const userver::components::ComponentConfig& config,
-                                      const userver::components::ComponentContext& context );
+    FacultyAdd( const userver::components::ComponentConfig& config,
+                const userver::components::ComponentContext& context );
 
 public:
-    static constexpr std::string_view kName = "handler-subject-group-as-department-group-add";
+    static constexpr std::string_view kName = "handler-faculty-add";
     using HttpHandlerBase::HttpHandlerBase;
 
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,

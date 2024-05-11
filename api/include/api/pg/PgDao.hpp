@@ -247,6 +247,19 @@ public:
                                      subject_name );
     }
 
+    [[nodiscard]] auto getSubjectBySubjectGroup( std::string_view subject_group_name ) const
+    {
+        const auto query{
+            "SELECT id, name FROM department.subjects "
+            "JOIN subject.groups ON subject.groups.subject_id = department.subjects.id "
+            "WHERE subject.groups.name = $1;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     subject_group_name );
+    }
+
     [[nodiscard]] int getSubjectGroupsCount( int subject_id ) const
     {
         const auto subject_groups_query{
@@ -322,7 +335,7 @@ public:
                                              std::string_view s3_key ) const
     {
         const auto query{
-            "INSERT INTO homework.homework(group_id, deadline, name, s3_key) "
+            "INSERT INTO subject.assignments(group_id, deadline, name, s3_key) "
             "VALUES ($1, $2, $3, $4) "
             "ON CONFLICT DO NOTHING;"
         };
@@ -333,6 +346,124 @@ public:
                                      deadline,
                                      name,
                                      s3_key );
+    }
+
+    [[nodiscard]] auto getAssignmentId( int subject_group_id, std::string_view name ) const
+    {
+        const auto query{
+            "SELECT id FROM subject.assignments "
+            "WHERE subject_group_id = $1 AND name = $2"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     subject_group_id,
+                                     name );
+    }
+
+    [[nodiscard]] auto updateMarkForAssignment( int assignment_id, int student_id, int mark ) const
+    {
+        const auto query{
+            "UPDATE subject.assignment_solutions "
+            "SET mark = $1"
+            "WHERE assignment_id = $2 AND student_id = $3;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     mark,
+                                     assignment_id,
+                                     student_id );
+    }
+
+    [[nodiscard]] auto
+    addAssignmentSolution( int student_id, int assignment_id, std::string_view s3_key ) const
+    {
+        const auto query{
+            "INSERT INTO subject.assignment_solutions (student_id, assignment_id, s3_key) "
+            "VALUES ($1, $2, $3) "
+            "ON CONFLICT DO NOTHING;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     student_id,
+                                     assignment_id,
+                                     s3_key );
+    }
+
+    [[nodiscard]] auto getUserIdViaJwt( std::string_view jwt ) const
+    {
+        const auto query{ "SELECT user_id FROM auth.tokens WHERE token = $1" };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     jwt );
+    }
+
+    [[nodiscard]] auto getStudentAssignments( int user_id ) const
+    {
+        const auto query{
+            "SELECT subject.assignments.id, subject.assignments.name, subject.assignments.s3_key, "
+            "subject.assignments.deadline "
+            "FROM subject.assignments "
+            "JOIN subject.groups ON subject.assignments.subject_group_id = subject.groups.id "
+            "WHERE subject.assignment_solutions.student_id = $1;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     user_id );
+    }
+
+    [[nodiscard]] auto getStudentAssignmentSolution( int user_id, int assignment_id ) const
+    {
+        const auto query{
+            "SELECT subject.assignment_solutions.s3_key, subject.assignment_solutions.mark "
+            "FROM subject.assignments "
+            "JOIN subject.assignment_solutions ON subject.assignments.id = "
+            "subject.assignment_solutions.assignment_id "
+            "WHERE subject.assignment_solutions.student_id = $1 AND subject.assignments.id = $2;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     user_id,
+                                     assignment_id );
+    }
+
+    [[nodiscard]] auto getTeacherAssignments( int user_id ) const
+    {
+        const auto query{
+            "SELECT subject.assignments.id, subject.assignments.name, subject.assignments.s3_key, "
+            "subject.assignments.deadline "
+            "FROM subject.assignments "
+            "JOIN subject.groups ON subject.groups.id = subject.assignments.subject_group_id "
+            "WHERE subject.groups.practic_id = $1;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     user_id );
+    }
+
+    [[nodiscard]] auto getAllSolutionsForAssignment( int assignment_id ) const
+    {
+        const auto query{
+            "SELECT university.users.surname, university.users.last_name, "
+            "university.users.middle_name, university.users.username "
+            "subject.assignment_solutions.s3_key, subject.assignment_solutions.mark "
+            "FROM subject.assignments "
+            "JOIN subject.assignment_solutions ON subject.assignments.id = "
+            "subject.assignment_solutions.assignment_id "
+            "JOIN university.users ON university.users.id = "
+            "subject.assignment_solutions.student_id "
+            "WHERE subject.assignments.id = $1"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     assignment_id );
     }
 
 private:
