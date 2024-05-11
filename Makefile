@@ -88,4 +88,4 @@ docker-clean-data:
 	$(DOCKER_COMPOSE) down -v
 	sudo rm -rf ./.pgdata
 	sudo rm -rf ./.localstack
-	sudo rm -rf ./.pgdata
+	sudo rm -rf ./.swagger-ui

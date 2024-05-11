@@ -17,12 +17,8 @@ namespace rl::handlers::middlewares
 class MiddlewareCors final : public userver::server::middlewares::HttpMiddlewareBase
 {
 public:
-    // This will be used as a kName for the SimpleHttpMiddlewareFactory
     static constexpr std::string_view kName{ "cors-middleware" };
 
-    // Handler isn't interesting to us, but we could use it if needed.
-    // Or we could implement the factory ourselves instead of using
-    // SimpleHttpMiddlewareFactory, and pass whatever parameters we want.
     explicit MiddlewareCors( const userver::server::handlers::HttpHandlerBase& ) { }
 
 private:

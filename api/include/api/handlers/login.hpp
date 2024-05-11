@@ -25,8 +25,6 @@ public:
     std::string HandleRequestThrow( const userver::server::http::HttpRequest&,
                                     userver::server::request::RequestContext& ctx ) const override;
 
-    std::optional< int > getUserIdViaMailLogin( const std::string& mail,
-                                                const std::string& password ) const;
     std::optional< int > getUserIdViaDb( const std::string& emailOrUsername,
                                          const std::string& password ) const;
 

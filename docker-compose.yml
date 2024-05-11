@@ -1,13 +1,13 @@
 services:
     swagger-ui:
         image: swaggerapi/swagger-ui
-        container_name: "swagger-ui"
+        container_name: "remote-learning-swagger-ui"
         ports:
           - "8082:8080"
         volumes:
-          - ./api/docs/swagger.json:/swagger.json
+          - ./api/docs/openapi.yaml:/openapi.yaml
         environment:
-          SWAGGER_JSON: /swagger.json
+          - SWAGGER_JSON=/openapi.yaml
 
     postgres:
         container_name: remote-learning-postgres

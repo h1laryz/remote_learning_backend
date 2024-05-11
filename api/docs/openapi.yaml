@@ -1,0 +1,1060 @@
+---
+openapi: "3.0.0"
+info:
+  version: "1.0.0"
+  title: "API Documentation"
+servers:
+  - url: "http://localhost:8080"
+    description: "Local server"
+paths:
+  /v1/login:
+    post:
+      summary: "User login"
+      tags:
+        - "Authentication"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email_or_username:
+                  type: "string"
+                password:
+                  type: "string"
+              required:
+                - "email_or_username"
+                - "password"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  token:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  description:
+                    type: "string"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  description:
+                    type: "string"
+  /v1/register:
+    post:
+      summary: "User registration"
+      tags:
+        - "Authentication"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                username:
+                  type: "string"
+                email:
+                  type: "string"
+                  format: "email"
+                password:
+                  type: "string"
+                date_of_birth:
+                  type: "string"
+                  format: "date"
+                last_name:
+                  type: "string"
+                surname:
+                  type: "string"
+                middle_name:
+                  type: "string"
+              required:
+                - "username"
+                - "email"
+                - "password"
+                - "date_of_birth"
+                - "last_name"
+                - "surname"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+                    description: "Registration status"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/admin/department/add:
+    post:
+      summary: "Add department"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                faculty_name:
+                  type: "string"
+                department_name:
+                  type: "string"
+              required:
+                - "faculty_name"
+                - "department_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/department/group/add:
+    post:
+      summary: "Add department group"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                department_name:
+                  type: "string"
+                department_group_name:
+                  type: "string"
+              required:
+                - "department_name"
+                - "department_group_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/faculty/add:
+    post:
+      summary: "Add faculty"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                faculty_name:
+                  type: "string"
+                university_name:
+                  type: "string"
+              required:
+                - "faculty_name"
+                - "university_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/student/add:
+    post:
+      summary: "Add student"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email_or_username:
+                  type: "string"
+                department_group_name:
+                  type: "string"
+              required:
+                - "email_or_username"
+                - "department_group_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/department/group/add_student:
+    post:
+      summary: "Add student to existing subject group"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email_or_username:
+                  type: "string"
+                subject_group_name:
+                  type: "string"
+              required:
+                - "email_or_username"
+                - "subject_group_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/department/subject/add:
+    post:
+      summary: "Add subject to department"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                lector_email_or_username:
+                  type: "string"
+                department_name:
+                  type: "string"
+                subject_name:
+                  type: "string"
+              required:
+                - "lector_email_or_username"
+                - "department_name"
+                - "subject_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/group/add:
+    post:
+      summary: "Add subject group"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                practic_email_or_username:
+                  type: "string"
+                subject_name:
+                  type: "string"
+                subject_group_name:
+                  type: "string"
+              required:
+                - "practic_email_or_username"
+                - "subject_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/group/department_group_add:
+    post:
+      summary: "Add subject group as department group"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                practic_email_or_username:
+                  type: "string"
+                subject_name:
+                  type: "string"
+                department_group_name:
+                  type: "string"
+              required:
+                - "practic_email_or_username"
+                - "subject_name"
+                - "department_group_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/teacher/add:
+    post:
+      summary: "Add a teacher"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email_or_username:
+                  type: "string"
+                rank_name:
+                  type: "string"
+              required:
+                - "email_or_username"
+                - "rank_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/faculty/add_teacher:
+    post:
+      summary: "Add a teacher to a faculty"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                email_or_username:
+                  type: "string"
+                faculty_name:
+                  type: "string"
+              required:
+                - "email_or_username"
+                - "faculty_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/teacher/rank/add:
+    post:
+      summary: "Add a teacher rank"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                teacher_rank:
+                  type: "string"
+              required:
+                - "teacher_rank"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/university/add:
+    post:
+      summary: "Add a university"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                university_name:
+                  type: "string"
+              required:
+                - "university_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignment/add:
+    post:
+      summary: "Add an assignment to a subject"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                assignment_file:
+                  type: "string"
+                  format: "binary"
+                deadline:
+                  type: "string"
+                  format: "date-time"
+                subject_group_name:
+                  type: "string"
+                subject_name:
+                  type: "string"
+                assignment_name:
+                  type: "string"
+              required:
+                - "assignment_file"
+                - "deadline"
+                - "subject_group_name"
+                - "subject_name"
+                - "assignment_name"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        500:
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignment/{s3_key}:
+    get:
+      summary: "Get assignment content by S3 key"
+      tags:
+        - "Admin"
+      parameters:
+        - name: "s3_key"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  filename:
+                    type: "string"
+                  content:
+                    type: "string"
+                    format: "binary"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignment/mark/add:
+    post:
+      summary: "Add or update assignment mark for a student"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                subject_group_name:
+                  type: "string"
+                assignment_name:
+                  type: "string"
+                mark:
+                  type: "integer"
+                student_email_or_username:
+                  type: "string"
+              required:
+                - "subject_group_name"
+                - "assignment_name"
+                - "mark"
+                - "student_email_or_username"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignment/solution/add:
+    post:
+      summary: "Add assignment solution for a student"
+      tags:
+        - "Admin"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: "object"
+              properties:
+                subject_group_name:
+                  type: "string"
+                assignment_name:
+                  type: "string"
+                student_email_or_username:
+                  type: "string"
+                assignment_solution_file:
+                  type: "string"
+                  format: "binary"
+              required:
+                - "subject_group_name"
+                - "assignment_name"
+                - "student_email_or_username"
+                - "assignment_solution_file"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  status:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+        409:
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignment/solution/{s3_key}:
+    get:
+      summary: "Get assignment solution content by S3 key"
+      tags:
+        - "Admin"
+      parameters:
+        - in: "path"
+          name: "s3_key"
+          required: true
+          schema:
+            type: "string"
+          description: "S3 key of the assignment solution"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  filename:
+                    type: "string"
+                  content:
+                    type: "string"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  error:
+                    type: "string"
+  /v1/admin/subject/assignments/student:
+    post:
+      summary: "Get assignments for a student"
+      tags:
+        - "Assignments"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                jwt:
+                  type: "string"
+                  description: "JWT token for authentication"
+              required:
+                - "jwt"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    assignment_name:
+                      type: "string"
+                    s3_location:
+                      type: "string"
+                    deadline:
+                      type: "string"
+                      format: "date-time"
+                    solution:
+                      type: "object"
+                      properties:
+                        s3_location:
+                          type: "string"
+                        mark:
+                          type: "integer"
+                  required:
+                    - "assignment_name"
+                    - "s3_location"
+                    - "deadline"
+                    - "solution"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/admin/subject/assignments/teacher:
+    post:
+      summary: "Get assignments for a teacher"
+      tags:
+        - "Assignments"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                jwt:
+                  type: "string"
+                  description: "JWT token for authentication"
+              required:
+                - "jwt"
+      responses:
+        200:
+          description: "Successful response"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    assignment_name:
+                      type: "string"
+                    s3_location:
+                      type: "string"
+                    deadline:
+                      type: "string"
+                      format: "date-time"
+                    solutions:
+                      type: "array"
+                      items:
+                        type: "object"
+                        properties:
+                          surname:
+                            type: "string"
+                          last_name:
+                            type: "string"
+                          middle_name:
+                            type: "string"
+                          username:
+                            type: "string"
+                          s3_location:
+                            type: "string"
+                          mark:
+                            type: "integer"
+                  required:
+                    - "assignment_name"
+                    - "s3_location"
+                    - "deadline"
+                    - "solutions"
+        400:
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        401:
+          description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      type: "object"
+      properties:
+        error:
+          type: "string"
+          description: "Error message"

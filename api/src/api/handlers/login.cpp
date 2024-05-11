@@ -13,7 +13,7 @@ namespace
 constexpr std::string_view kUsername{ "username" };
 constexpr std::string_view kPassword{ "password" };
 constexpr std::string_view kMail{ "email" };
-constexpr std::string_view kEmailOrUsername{ "emailOrUsername" };
+constexpr std::string_view kEmailOrUsername{ "email_or_username" };
 } // namespace
 
 namespace rl::handlers
