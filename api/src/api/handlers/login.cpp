@@ -7,6 +7,7 @@
 #include <userver/storages/postgres/result_set.hpp>
 
 #include "api/handlers/validators/RegexValidator.hpp"
+#include "api/pg/PgDao.hpp"
 
 namespace
 {
@@ -83,16 +84,30 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
 
     const auto user_id = opt_user_id.value();
 
+    std::string role;
+
+    const pg::PgDao pg_dao{ pg_cluster_ };
+
+    if ( pg_dao.isUserStudent( user_id ) )
+    {
+        role = "student";
+    }
+
+    if ( pg_dao.isUserTeacher( user_id ) )
+    {
+        role = "teacher";
+    }
+
     const auto token{ jwt::create()
                           .set_type( "JWT" )
                           .set_id( "rsa-create-example" )
                           .set_issued_now()
                           .set_expires_in( std::chrono::seconds{ 36000 } )
-                          .set_payload_claim( "sample", jwt::claim( std::string{ "test" } ) )
+                          .set_payload_claim( "role", jwt::claim( role ) )
                           .sign( jwt::algorithm::hs256( "secret" ) ) };
 
     const auto pg_query_save_token{
-        "INSERT INTO auth_schema.tokens(token, user_id) "
+        "INSERT INTO auth.tokens(token, user_id) "
         "VALUES ($1, $2);"
     };
 
@@ -111,7 +126,7 @@ std::optional< int > Login::getUserIdViaDb( const std::string& emailOrUsername,
                                             const std::string& password ) const
 {
     const auto pg_query =
-        "SELECT id FROM auth_schema.users "
+        "SELECT id FROM university.users "
         "WHERE username = $1 OR email = $1"
         "AND password = $2;";
 

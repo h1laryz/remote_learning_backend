@@ -161,7 +161,7 @@ bool Register::registerImpl( std::string_view surname,
     if ( !middle_name.empty() )
     {
         const auto query{
-            "INSERT INTO auth_schema.users(username, email, last_name, surname, middle_name, "
+            "INSERT INTO university.users(username, email, last_name, surname, middle_name, "
             "password, date_of_birth) "
             "VALUES ($1, $2, $3, $4, $5, $6, $7::DATE) "
             "RETURNING id;"
@@ -186,7 +186,7 @@ bool Register::registerImpl( std::string_view surname,
     }
 
     const auto query{
-        "INSERT INTO auth_schema.users(username, email, last_name, surname, password, "
+        "INSERT INTO university.users(username, email, last_name, surname, password, "
         "date_of_birth) "
         "VALUES ($1, $2, $3, $4, $5, $6::DATE) "
         "RETURNING id;"
@@ -212,7 +212,7 @@ bool Register::registerImpl( std::string_view surname,
 bool Register::isUsernameFree( std::string_view username ) const
 {
     const auto query{
-        "SELECT id FROM auth_schema.users "
+        "SELECT id FROM university.users "
         "WHERE username = $1"
     };
 
@@ -231,7 +231,7 @@ bool Register::isUsernameFree( std::string_view username ) const
 bool Register::isEmailFree( std::string_view email ) const
 {
     const auto query{
-        "SELECT id FROM auth_schema.users "
+        "SELECT id FROM university.users "
         "WHERE email = $1"
     };
 

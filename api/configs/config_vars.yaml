@@ -6,6 +6,6 @@ is-testing: false
 
 server-port: 8080
 
-dbconnection: 'postgresql://postgres:postgres@172.30.0.2:5432/postgres'
+dbconnection: 'postgresql://postgres:postgres@172.23.0.2:5432/postgres'
 
 jwt-secret: 'secret'

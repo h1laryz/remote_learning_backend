@@ -27,13 +27,15 @@ private:
     {
         request.GetHttpResponse().SetHeader( kOriginHeader, "*" );
         request.GetHttpResponse().SetHeader( kCredentialsHeader, "true" );
-        request.GetHttpResponse().SetHeader( kAllowedHeaders, "Content-Type, Authorization" );
+        request.GetHttpResponse().SetHeader(
+            kAllowedHeaders,
+            "Content-Type, Authorization, Origin, X-Requested-With, Accept" );
 
         if ( request.GetMethod() == userver::server::http::HttpMethod::kOptions )
         {
             request.GetHttpResponse().SetHeader( kMethodsHeader,
                                                  "GET,HEAD,POST,PUT,DELETE,CONNECT,OPTIONS,PATCH" );
-            request.GetHttpResponse().SetStatus( userver::server::http::HttpStatus::kNoContent );
+            request.GetHttpResponse().SetStatus( userver::server::http::HttpStatus::kOk );
         }
         else
         {

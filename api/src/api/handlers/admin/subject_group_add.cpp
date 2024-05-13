@@ -80,14 +80,16 @@ std::string SubjectGroupAdd::HandleRequestThrow( const userver::server::http::Ht
     }
 
     const auto subject_id{ subject_result.AsSingleRow< int >() };
-    const auto subject_groups_amount{ pg_dao.getSubjectGroupsCount( subject_id ) };
 
-    const auto subject_group_name = [ request_body, subject_groups_amount, subject_name ]()
+    const auto subject_group_name = [ request_body, pg_dao, subject_name, subject_id ]()
     {
         if ( request_body.HasMember( kSubjectGroupName ) )
         {
             return request_body[ kSubjectGroupName ].As< std::string >();
         }
+
+        const auto subject_groups_amount{ pg_dao.getSubjectGroupsCount( subject_id ) };
+
         return subject_name + '-' + std::to_string( subject_groups_amount + 1 );
     }();
 

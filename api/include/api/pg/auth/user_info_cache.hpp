@@ -20,9 +20,9 @@ struct AuthCachePolicy
 {
     static constexpr std::string_view kName = "auth-pg-cache";
 
-    using ValueType                     = UserDbInfo;
-    static constexpr auto kKeyMember    = &UserDbInfo::token;
-    static constexpr const char* kQuery = "SELECT token, user_id, scopes FROM auth_schema.tokens";
+    using ValueType                            = UserDbInfo;
+    static constexpr auto kKeyMember           = &UserDbInfo::token;
+    static constexpr const char* kQuery        = "SELECT token, user_id, scopes FROM auth.tokens";
     static constexpr const char* kUpdatedField = "updated";
     using UpdatedFieldType                     = userver::storages::postgres::TimePointTz;
 

@@ -103,7 +103,7 @@ std::string AssignmentAdd::HandleRequestThrow( const userver::server::http::Http
                                                                        assignment_name,
                                                                        s3_key_location.value() ) };
 
-    if ( subject_assignment_result.IsEmpty() )
+    if ( !subject_assignment_result.RowsAffected() )
     {
         userver::formats::json::ValueBuilder response;
         response[ "error" ] = "subjectAssignmentAlreadyExist";

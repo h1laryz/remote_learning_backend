@@ -112,7 +112,7 @@ CREATE TABLE IF NOT EXISTS subject.assignments
 (
     id SERIAL    NOT NULL PRIMARY KEY,
     subject_group_id INT NOT NULL REFERENCES subject.groups(id),
-    deadline timestamp NOT NULL CHECK(deadline > NOW()),
+    deadline TIMESTAMP WITH TIME ZONE NOT NULL CHECK(deadline > NOW()),
     name TEXT NOT NULL CHECK(char_length(name) > 1),
     s3_key TEXT NOT NULL CHECK(char_length(s3_key) > 1)
 );

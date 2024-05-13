@@ -12,14 +12,17 @@ constexpr auto kSurname{ "surname" };
 constexpr auto kLastName{ "last_name" };
 constexpr auto kMiddleName{ "middle_name" };
 constexpr auto kUsername{ "username" };
-using AssignmentsSet = std::tuple< int, std::string, std::string, std::string >;
-using SolutionsSet   = std::
+using AssignmentsSet =
+    std::tuple< int, std::string, std::string, std::string, std::string, std::string >;
+using SolutionsSet = std::
     tuple< std::string, std::string, std::string, std::string, std::string, std::optional< int > >;
 constexpr auto kAssignmentName{ "assignment_name" };
 constexpr auto kMark{ "mark" };
 constexpr auto kS3Location{ "s3_location" };
 constexpr auto kDeadline{ "deadline" };
 constexpr auto kSolutions{ "solutions" };
+constexpr auto kSubjectName{ "subject_name" };
+constexpr auto kSubjectGroupName{ "subject_group_name" };
 } // namespace
 
 namespace rl::handlers
@@ -37,18 +40,7 @@ std::string
 TeacherAssignmentsGet::HandleRequestThrow( const userver::server::http::HttpRequest& request,
                                            userver::server::request::RequestContext& ) const
 {
-    const auto request_body{ userver::formats::json::FromString( request.RequestBody() ) };
-
-    const auto body_validation_error{
-        validators::ParameterValidator::getErrorIfNotPassedBodyParameters( request_body, { kJwt } )
-    };
-    if ( body_validation_error.has_value() )
-    {
-        request.SetResponseStatus( userver::server::http::HttpStatus::kBadRequest );
-        return userver::formats::json::ToString( body_validation_error.value() );
-    }
-
-    const auto jwt{ request.GetHeader(
+    const auto& jwt{ request.GetHeader(
         userver::http::headers::kAuthorization ) }; // TODO: split bearer
 
     const pg::PgDao pg_dao{ pg_cluster_ };
@@ -68,28 +60,36 @@ TeacherAssignmentsGet::HandleRequestThrow( const userver::server::http::HttpRequ
     const auto teacher_assignments_result{ pg_dao.getTeacherAssignments( user_id ) };
     if ( teacher_assignments_result.IsEmpty() )
     {
-        userver::formats::json::ValueBuilder response;
-        return userver::formats::json::ToString( response.ExtractValue() );
+        return {};
     }
 
-    const auto teacher_assignments{ teacher_assignments_result.AsSetOf< AssignmentsSet >() };
+    const auto teacher_assignments{ teacher_assignments_result.AsSetOf< AssignmentsSet >(
+        userver::storages::postgres::kRowTag ) };
 
     userver::formats::json::ValueBuilder response;
     for ( const auto& assignment : teacher_assignments )
     {
-        const auto [ assignment_id, assignment_name, s3_key_location, deadline ] = assignment;
+        const auto [ assignment_id,
+                     assignment_name,
+                     s3_key_location,
+                     deadline,
+                     subject_name,
+                     subject_group_name ] = assignment;
 
         userver::formats::json::ValueBuilder assignment_json;
-        assignment_json[ kAssignmentName ] = assignment_name;
-        assignment_json[ kS3Location ]     = s3_key_location;
-        assignment_json[ kDeadline ]       = deadline;
+        assignment_json[ kAssignmentName ]   = assignment_name;
+        assignment_json[ kS3Location ]       = s3_key_location;
+        assignment_json[ kDeadline ]         = deadline;
+        assignment_json[ kSubjectName ]      = subject_name;
+        assignment_json[ kSubjectGroupName ] = subject_group_name;
 
         const auto solutions_for_assignment_result{ pg_dao.getAllSolutionsForAssignment(
             assignment_id ) };
         if ( !solutions_for_assignment_result.IsEmpty() )
         {
             const auto solutions_for_assignment{
-                solutions_for_assignment_result.AsSetOf< SolutionsSet >()
+                solutions_for_assignment_result.AsSetOf< SolutionsSet >(
+                    userver::storages::postgres::kRowTag )
             };
             for ( const auto& solution : solutions_for_assignment )
             {

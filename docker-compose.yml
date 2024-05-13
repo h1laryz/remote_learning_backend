@@ -96,4 +96,4 @@ networks:
     postgres:
         driver: bridge
     localstack:
-      driver: bridge
+        driver: bridge

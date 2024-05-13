@@ -143,37 +143,37 @@ components_manager:
             method: POST,OPTIONS
 
         handler-assignment-add:
-            path: /v1/admin/subject/assignment/add
+            path: /v1/subject/assignment/add
             task_processor: main-task-processor
             method: POST,OPTIONS
 
         handler-assignment-content-get:
-            path: /v1/admin/subject/assignment/{s3_key}
+            path: /v1/subject/assignment/{s3_key}
             task_processor: main-task-processor
             method: GET,OPTIONS
 
         handler-assignment-mark-add:
-            path: /v1/admin/subject/assignment/mark/add
+            path: /v1/subject/assignment/mark/add
             task_processor: main-task-processor
             method: POST,OPTIONS
 
         handler-assignment-solution-add:
-            path: /v1/admin/subject/assignment/solution/add
+            path: /v1/subject/assignment/solution/add
             task_processor: main-task-processor
             method: POST,OPTIONS
 
         handler-assignment-solution-content-get:
-            path: /v1/admin/subject/assignment/solution/{s3_key}
+            path: /v1/subject/assignment/solution/{s3_key}
             task_processor: main-task-processor
             method: GET,OPTIONS
 
         handler-student-assignments-get:
-            path: /v1/admin/subject/assignments/student
+            path: /v1/subject/assignments/student
             task_processor: main-task-processor
             method: GET,OPTIONS
 
         handler-teacher-assignments-get:
-            path: /v1/admin/subject/assignments/teacher
+            path: /v1/subject/assignments/teacher
             task_processor: main-task-processor
             method: GET,OPTIONS
 

@@ -109,7 +109,17 @@ std::string SubjectGroupAsDepartmentGroupAdd::HandleRequestThrow(
         return userver::formats::json::ToString( response.ExtractValue() );
     }
 
-    const auto subject_group_id{ add_subject_group_result.AsSingleRow< int >() };
+    const auto subject_group_id_result{ pg_dao.getSubjectGroupId( subject_group_name ) };
+    if ( subject_group_id_result.IsEmpty() )
+    {
+        userver::formats::json::ValueBuilder response;
+        response[ "error" ] = "internalServerError";
+
+        request.SetResponseStatus( userver::server::http::HttpStatus::kInternalServerError );
+        return userver::formats::json::ToString( response.ExtractValue() );
+    }
+
+    const auto subject_group_id{ subject_group_id_result.AsSingleRow< int >() };
 
     const auto students_result{ pg_dao.getStudentsIdsInDepartmentGroup( department_group_id ) };
     if ( students_result.IsEmpty() )

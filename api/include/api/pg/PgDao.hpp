@@ -250,7 +250,7 @@ public:
     [[nodiscard]] auto getSubjectBySubjectGroup( std::string_view subject_group_name ) const
     {
         const auto query{
-            "SELECT id, name FROM department.subjects "
+            "SELECT department.subjects.id, department.subjects.name FROM department.subjects "
             "JOIN subject.groups ON subject.groups.subject_id = department.subjects.id "
             "WHERE subject.groups.name = $1;"
         };
@@ -263,7 +263,7 @@ public:
     [[nodiscard]] int getSubjectGroupsCount( int subject_id ) const
     {
         const auto subject_groups_query{
-            "SELECT COUNT(*) INTO group_count "
+            "SELECT COUNT(*) "
             "FROM subject.groups "
             "WHERE subject_id = $1;"
         };
@@ -278,8 +278,8 @@ public:
     [[nodiscard]] auto getSubjectGroupId( std::string_view name ) const
     {
         const auto subject_groups_query{
-            "SELECT id FROM FROM subject.groups "
-            "WHERE name = $1;"
+            "SELECT id FROM subject.groups "
+            "WHERE LOWER(subject.groups.name) = LOWER($1);"
         };
 
         return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
@@ -335,8 +335,8 @@ public:
                                              std::string_view s3_key ) const
     {
         const auto query{
-            "INSERT INTO subject.assignments(group_id, deadline, name, s3_key) "
-            "VALUES ($1, $2, $3, $4) "
+            "INSERT INTO subject.assignments(subject_group_id, deadline, name, s3_key) "
+            "VALUES ($1, $2::timestamp, $3, $4) "
             "ON CONFLICT DO NOTHING;"
         };
 
@@ -405,10 +405,14 @@ public:
     {
         const auto query{
             "SELECT subject.assignments.id, subject.assignments.name, subject.assignments.s3_key, "
-            "subject.assignments.deadline "
+            "TO_CHAR(subject.assignments.deadline AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS TZ'), "
+            "department.subjects.name, subject.groups.name "
             "FROM subject.assignments "
             "JOIN subject.groups ON subject.assignments.subject_group_id = subject.groups.id "
-            "WHERE subject.assignment_solutions.student_id = $1;"
+            "JOIN subject.groups_students ON subject.groups.id = "
+            "subject.groups_students.subject_group_id "
+            "JOIN department.subjects ON department.subjects.id = subject.groups.subject_id "
+            "WHERE subject.groups_students.student_id = $1;"
         };
 
         return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
@@ -436,9 +440,11 @@ public:
     {
         const auto query{
             "SELECT subject.assignments.id, subject.assignments.name, subject.assignments.s3_key, "
-            "subject.assignments.deadline "
+            "TO_CHAR(subject.assignments.deadline AT TIME ZONE 'UTC', 'YYYY-MM-DD HH24:MI:SS TZ'), "
+            "department.subjects.name, subject.groups.name "
             "FROM subject.assignments "
             "JOIN subject.groups ON subject.groups.id = subject.assignments.subject_group_id "
+            "JOIN department.subjects ON department.subjects.id = subject.groups.subject_id "
             "WHERE subject.groups.practic_id = $1;"
         };
 
@@ -451,7 +457,7 @@ public:
     {
         const auto query{
             "SELECT university.users.surname, university.users.last_name, "
-            "university.users.middle_name, university.users.username "
+            "university.users.middle_name, university.users.username, "
             "subject.assignment_solutions.s3_key, subject.assignment_solutions.mark "
             "FROM subject.assignments "
             "JOIN subject.assignment_solutions ON subject.assignments.id = "
@@ -464,6 +470,20 @@ public:
         return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
                                      query,
                                      assignment_id );
+    }
+
+    [[nodiscard]] auto setMarkForSolutionByS3Key( std::string_view s3_key, double mark ) const
+    {
+        const auto query{
+            "UPDATE subject.assignment_solutions "
+            "SET mark = $1 "
+            "WHERE s3_key = $2 AND mark IS NULL;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     mark,
+                                     s3_key );
     }
 
 private:

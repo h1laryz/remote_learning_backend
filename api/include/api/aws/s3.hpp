@@ -54,7 +54,7 @@ public:
         Aws::S3::Model::CreateBucketOutcome outcome = client.CreateBucket( request );
         if ( !outcome.IsSuccess() )
         {
-            auto err = outcome.GetError();
+            auto& err = outcome.GetError();
             LOG_ERROR() << "Error: CreateBucket: " << err.GetExceptionName() << ": "
                         << err.GetMessage();
         }
@@ -112,7 +112,7 @@ public:
                    std::string_view homework_content ) const
     {
         // Формируем ключ (путь к файлу) в S3 в формате "group/subject/homework"
-        std::string key = std::string( group ) + "/" + std::string( subject ) + "/" + "assignments/"
+        std::string key = std::string( subject ) + "/" + std::string( group ) + "/" + "assignments/"
             + std::string( file_name );
 
         // Инициализируем S3 клиент
@@ -153,7 +153,7 @@ public:
                            int student_id ) const
     {
         // Формируем ключ (путь к файлу) в S3 в формате "group/subject/homework"
-        std::string key = std::string( group ) + "/" + std::string( subject ) + "/" + "solutions/"
+        std::string key = std::string( subject ) + "/" + std::string( group ) + "/" + "solutions/"
             + std::to_string( student_id ) + std::string( file_name );
 
         // Инициализируем S3 клиент

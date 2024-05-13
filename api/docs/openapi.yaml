@@ -684,11 +684,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignment/add:
+  /v1/subject/assignment/add:
     post:
       summary: "Add an assignment to a subject"
       tags:
-        - "Admin"
+        - "Assignment"
       requestBody:
         required: true
         content:
@@ -751,11 +751,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignment/{s3_key}:
+  /v1/subject/assignment/{s3_key}:
     get:
       summary: "Get assignment content by S3 key"
       tags:
-        - "Admin"
+        - "Assignment"
       parameters:
         - name: "s3_key"
           in: "path"
@@ -784,11 +784,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignment/mark/add:
+  /v1/subject/assignment/mark/add:
     post:
       summary: "Add or update assignment mark for a student"
       tags:
-        - "Admin"
+        - "Assignment"
       requestBody:
         required: true
         content:
@@ -837,11 +837,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignment/solution/add:
+  /v1/subject/assignment/solution/add:
     post:
       summary: "Add assignment solution for a student"
       tags:
-        - "Admin"
+        - "Assignment"
       requestBody:
         required: true
         content:
@@ -891,11 +891,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignment/solution/{s3_key}:
+  /v1/subject/assignment/solution/{s3_key}:
     get:
       summary: "Get assignment solution content by S3 key"
       tags:
-        - "Admin"
+        - "Assignment"
       parameters:
         - in: "path"
           name: "s3_key"
@@ -924,11 +924,11 @@ paths:
                 properties:
                   error:
                     type: "string"
-  /v1/admin/subject/assignments/student:
-    post:
+  /v1/subject/assignments/student:
+    get:
       summary: "Get assignments for a student"
       tags:
-        - "Assignments"
+        - "Assignment"
       requestBody:
         required: true
         content:
@@ -982,11 +982,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /v1/admin/subject/assignments/teacher:
-    post:
+  /v1/subject/assignments/teacher:
+    get:
       summary: "Get assignments for a teacher"
       tags:
-        - "Assignments"
+        - "Assignment"
       requestBody:
         required: true
         content:
