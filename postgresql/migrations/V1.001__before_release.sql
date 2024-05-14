@@ -136,3 +136,13 @@ CREATE TABLE IF NOT EXISTS auth.tokens
     token TEXT                  PRIMARY KEY,
     user_id INT NOT NULL        REFERENCES university.users(id)
 );
+
+CREATE SCHEMA IF NOT EXISTS messenger;
+CREATE TABLE IF NOT EXISTS messenger.messages
+(
+    id SERIAL NOT NULL PRIMARY KEY,
+    subject_group_id INT NOT NULL REFERENCES subject.groups(id),
+    user_id INT NOT NULL        REFERENCES university.users(id),
+    content TEXT NOT NULL CHECK(char_length(content) > 1),
+    created_at TIMESTAMP DEFAULT NOW()
+);

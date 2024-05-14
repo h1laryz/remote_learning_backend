@@ -486,6 +486,67 @@ public:
                                      s3_key );
     }
 
+    [[nodiscard]] auto
+    sendMessage( int subject_group_id, int user_id, std::string_view content ) const
+    {
+        const auto query{
+            "INSERT INTO messenger.messages (subject_group_id, user_id, content) "
+            "VALUES ($1, $2, $3) "
+            "ON CONFLICT DO NOTHING;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     subject_group_id,
+                                     user_id,
+                                     content );
+    }
+
+    [[nodiscard]] auto getMessagesForSubjectGroup( int subject_group_id ) const
+    {
+        const auto query{
+            "SELECT university.users.surname, university.users.last_name, "
+            "TO_CHAR(messenger.messages.created_at, 'YYYY-MM-DD HH24:MI:SS TZ'), "
+            "messenger.messages.content "
+            "FROM messenger.messages "
+            "JOIN university.users ON messenger.messages.user_id = university.users.id "
+            "WHERE messenger.messages.subject_group_id = $1"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     subject_group_id );
+    }
+
+    [[nodiscard]] auto getSubjectGroupsForStudent( int user_id ) const
+    {
+        const auto query{
+            "SELECT subject.groups.name "
+            "FROM subject.groups "
+            "JOIN subject.groups_students ON subject.groups_students.subject_group_id = "
+            "subject.groups.id "
+            "subject.groups_students.student_id = $1"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+
+                                     user_id );
+    }
+
+    [[nodiscard]] auto getSubjectGroupsForTeacher( int user_id ) const
+    {
+        const auto query{
+            "SELECT subject.groups.name "
+            "FROM subject.groups "
+            "WHERE subject.groups.practic_id = $1"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     query,
+                                     user_id );
+    }
+
 private:
     userver::storages::postgres::ClusterPtr pg_cluster_;
 };

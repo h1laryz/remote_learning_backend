@@ -25,8 +25,12 @@
 #include "api/handlers/assignment_solution_add.hpp"
 #include "api/handlers/assignment_solution_content_get.hpp"
 #include "api/handlers/login.hpp"
+#include "api/handlers/message_send.hpp"
 #include "api/handlers/register.hpp"
 #include "api/handlers/student_assignments_get.hpp"
+#include "api/handlers/student_diary_get.hpp"
+#include "api/handlers/subject_group_messages_get.hpp"
+#include "api/handlers/subject_groups_get.hpp"
 #include "api/handlers/teacher_assignments_get.hpp"
 
 #include "api/handlers/pipelines/CorsPipelineBuilder.hpp"
@@ -69,7 +73,11 @@ int main( int argc, const char* const argv[] )
                                     .Append< rl::handlers::TeacherAdd >()
                                     .Append< rl::handlers::TeacherAddToFaculty >()
                                     .Append< rl::handlers::TeacherRankAdd >()
-                                    .Append< rl::handlers::UniversityAdd >();
+                                    .Append< rl::handlers::UniversityAdd >()
+                                    .Append< rl::handlers::StudentDiaryGet >()
+                                    .Append< rl::handlers::SubjectGroupMessagesGet >()
+                                    .Append< rl::handlers::MessageSend >()
+                                    .Append< rl::handlers::SubjectGroupsGet >();
 
     Aws::SDKOptions options;
     Aws::InitAPI( options );
