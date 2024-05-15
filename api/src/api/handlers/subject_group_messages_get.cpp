@@ -14,7 +14,8 @@ const auto kSurname{ "surname" };
 const auto kLastName{ "last_name" };
 const auto kTimestamp{ "timestamp" };
 const auto kContent{ "content" };
-using MessageRow = std::tuple< std::string, std::string, std::string, std::string >;
+const auto kUserId { "user_id" };
+using MessageRow = std::tuple< std::string, std::string, std::string, std::string, int >;
 } // namespace
 
 namespace rl::handlers
@@ -85,13 +86,14 @@ SubjectGroupMessagesGet::HandleRequestThrow( const userver::server::http::HttpRe
         userver::storages::postgres::kRowTag ) };
     for ( const auto message : subject_messages )
     {
-        const auto [ surname, last_name, timestamp, content ] = message;
+        const auto [ surname, last_name, timestamp, content, sender_user_id ] = message;
 
         userver::formats::json::ValueBuilder message_json;
         message_json[ kSurname ]   = surname;
         message_json[ kLastName ]  = last_name;
         message_json[ kTimestamp ] = timestamp;
         message_json[ kContent ]   = content;
+        message_json[kUserId] = sender_user_id;
 
         response.PushBack( std::move( message_json ) );
     }

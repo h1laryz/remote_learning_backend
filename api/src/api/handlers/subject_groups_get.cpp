@@ -9,6 +9,7 @@
 
 namespace
 {
+using GroupRow = std::tuple<std::string>;
 } // namespace
 
 namespace rl::handlers
@@ -52,12 +53,14 @@ std::string SubjectGroupsGet::HandleRequestThrow( const userver::server::http::H
             return {};
         }
 
-        const auto subject_groups{ subject_groups_result.AsSetOf< std::string >(
+        const auto subject_groups{ subject_groups_result.AsSetOf< GroupRow >(
             userver::storages::postgres::kRowTag ) };
 
         for ( const auto subject_group : subject_groups )
         {
-            response.PushBack( subject_group );
+            const auto [subject_name] = subject_group;
+
+            response.PushBack( subject_name );
         }
     }
     else if ( pg_dao.isUserTeacher( user_id ) )
@@ -69,12 +72,14 @@ std::string SubjectGroupsGet::HandleRequestThrow( const userver::server::http::H
             return {};
         }
 
-        const auto subject_groups{ subject_groups_result.AsSetOf< std::string >(
+        const auto subject_groups{ subject_groups_result.AsSetOf< GroupRow >(
             userver::storages::postgres::kRowTag ) };
 
         for ( const auto subject_group : subject_groups )
         {
-            response.PushBack( subject_group );
+            const auto [subject_name] = subject_group;
+
+            response.PushBack( subject_name );
         }
     }
     else

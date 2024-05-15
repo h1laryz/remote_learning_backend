@@ -507,7 +507,7 @@ public:
         const auto query{
             "SELECT university.users.surname, university.users.last_name, "
             "TO_CHAR(messenger.messages.created_at, 'YYYY-MM-DD HH24:MI:SS TZ'), "
-            "messenger.messages.content "
+            "messenger.messages.content, university.users.id "
             "FROM messenger.messages "
             "JOIN university.users ON messenger.messages.user_id = university.users.id "
             "WHERE messenger.messages.subject_group_id = $1"
@@ -525,7 +525,7 @@ public:
             "FROM subject.groups "
             "JOIN subject.groups_students ON subject.groups_students.subject_group_id = "
             "subject.groups.id "
-            "subject.groups_students.student_id = $1"
+            "WHERE subject.groups_students.student_id = $1"
         };
 
         return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,

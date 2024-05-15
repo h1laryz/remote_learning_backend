@@ -104,6 +104,7 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
                           .set_issued_now()
                           .set_expires_in( std::chrono::seconds{ 36000 } )
                           .set_payload_claim( "role", jwt::claim( role ) )
+                          .set_payload_claim("user_id", jwt::claim(std::to_string(user_id)))
                           .sign( jwt::algorithm::hs256( "secret" ) ) };
 
     const auto pg_query_save_token{
