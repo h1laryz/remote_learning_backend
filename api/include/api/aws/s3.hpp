@@ -260,6 +260,18 @@ public:
         return std::nullopt;
     }
 
+    std::string generatePresignedUrl(const std::string& objectKey) const
+    {
+        Aws::S3::S3Client s3_client(s3dao_.getClientConfig());
+
+        Aws::String bucket = "homework";
+        Aws::String key = objectKey.c_str();
+
+        Aws::String presignedUrl = s3_client.GeneratePresignedUrl(bucket, key, Aws::Http::HttpMethod::HTTP_GET, 3600); // URL valid for 1 hour
+
+        return std::string(presignedUrl.c_str());
+    }
+
 private:
     S3Dao s3dao_;
     const S3Bucket bucket_{ S3Bucket::homework };

@@ -10,7 +10,7 @@ namespace
 constexpr std::string_view kJwt{ "jwt" };
 using AssignmentsSet =
     std::tuple< int, std::string, std::string, std::string, std::string, std::string >;
-using AssignmentSolutionRow = std::tuple< std::string, std::optional< int > >;
+using AssignmentSolutionRow = std::tuple< std::string, std::optional< int >, std::string >;
 constexpr auto kAssignmentName{ "assignment_name" };
 constexpr auto kMark{ "mark" };
 constexpr auto kS3Location{ "s3_location" };
@@ -82,10 +82,11 @@ StudentAssignmentsGet::HandleRequestThrow( const userver::server::http::HttpRequ
         };
         if ( !student_assignment_solution_result.IsEmpty() )
         {
-            const auto [ solution_s3_key, mark ] =
+            const auto [ solution_s3_key, mark, assignment_date_time ] =
                 student_assignment_solution_result.AsSingleRow< AssignmentSolutionRow >(
                     userver::storages::postgres::kRowTag );
             json_obj[ "solution" ][ kS3Location ] = solution_s3_key;
+            json_obj["assignment_date"] = assignment_date_time;
 
             if ( mark.has_value() )
             {

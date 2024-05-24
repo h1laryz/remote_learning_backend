@@ -423,7 +423,8 @@ public:
     [[nodiscard]] auto getStudentAssignmentSolution( int user_id, int assignment_id ) const
     {
         const auto query{
-            "SELECT subject.assignment_solutions.s3_key, subject.assignment_solutions.mark "
+            "SELECT subject.assignment_solutions.s3_key, subject.assignment_solutions.mark, "
+            "TO_CHAR(subject.assignments.created_at, 'YYYY-MM-DD HH24:MI:SS TZ') "
             "FROM subject.assignments "
             "JOIN subject.assignment_solutions ON subject.assignments.id = "
             "subject.assignment_solutions.assignment_id "

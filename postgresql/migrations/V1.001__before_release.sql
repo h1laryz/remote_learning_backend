@@ -114,7 +114,8 @@ CREATE TABLE IF NOT EXISTS subject.assignments
     subject_group_id INT NOT NULL REFERENCES subject.groups(id),
     deadline TIMESTAMP WITH TIME ZONE NOT NULL CHECK(deadline > NOW()),
     name TEXT NOT NULL CHECK(char_length(name) > 1),
-    s3_key TEXT NOT NULL CHECK(char_length(s3_key) > 1)
+    s3_key TEXT NOT NULL CHECK(char_length(s3_key) > 1),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE UNIQUE INDEX assignments_lower_case_name ON subject.assignments (LOWER(name), subject_group_id);
