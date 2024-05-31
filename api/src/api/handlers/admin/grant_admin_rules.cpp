@@ -1,4 +1,4 @@
-#include "api/handlers/admin/teacher_add.hpp"
+#include "api/handlers/admin/grant_admin_rules.hpp"
 
 #include <userver/http/common_headers.hpp>
 
@@ -10,13 +10,13 @@
 namespace
 {
 constexpr std::string_view kEmailOrUsername{ "email_or_username" };
-constexpr std::string_view kRankName{ "rank_name" };
+constexpr std::string_view kLevel{ "level" };
 } // namespace
 
 namespace rl::handlers
 {
-TeacherAdd::TeacherAdd( const userver::components::ComponentConfig& config,
-                        const userver::components::ComponentContext& context )
+GrantAdminRules::GrantAdminRules( const userver::components::ComponentConfig& config,
+                              const userver::components::ComponentContext& context )
     : userver::server::handlers::HttpHandlerBase{ config, context }
     , pg_cluster_{
         context.FindComponent< userver::components::Postgres >( "auth-database" ).GetCluster()
@@ -24,47 +24,15 @@ TeacherAdd::TeacherAdd( const userver::components::ComponentConfig& config,
 {
 }
 
-std::string TeacherAdd::HandleRequestThrow( const userver::server::http::HttpRequest& request,
-                                            userver::server::request::RequestContext& ) const
+std::string GrantAdminRules::HandleRequestThrow( const userver::server::http::HttpRequest& request,
+                                               userver::server::request::RequestContext& ) const
 {
-    const auto& jwt{ request.GetHeader( userver::http::headers::kAuthorization ) };
-
-    auto decodedJwt = jwt::decode(jwt);
-
-    auto verifier = jwt::verify()
-                        .allow_algorithm(jwt::algorithm::hs256{"secret"});
-
-    verifier.verify(decodedJwt);
-    const auto payload { decodedJwt.get_payload_json() };
-
-    const auto roleIt { payload.find("role") };
-    if (roleIt != payload.cend() || roleIt->second.to_str() != "admin")
-    {
-        request.SetResponseStatus( userver::server::http::HttpStatus::kUnauthorized );
-
-        userver::formats::json::ValueBuilder response;
-        response[ "error" ] = "userIsNotAdmin";
-
-        return userver::formats::json::ToString(response.ExtractValue());
-    }
-
-    const auto levelIt { payload.find("level") };
-    if (levelIt != payload.cend() || roleIt->second.to_str() != "full" || roleIt->second.to_str() != "faculty")
-    {
-        request.SetResponseStatus( userver::server::http::HttpStatus::kUnauthorized );
-
-        userver::formats::json::ValueBuilder response;
-        response[ "error" ] = "noAccess";
-
-        return userver::formats::json::ToString(response.ExtractValue());
-    }
-
     const auto request_body{ userver::formats::json::FromString( request.RequestBody() ) };
 
     const auto body_validation_error{
         validators::ParameterValidator::getErrorIfNotPassedBodyParameters(
             request_body,
-            { kEmailOrUsername, kRankName } )
+            { kEmailOrUsername, kLevel } )
     };
     if ( body_validation_error.has_value() )
     {
@@ -73,9 +41,10 @@ std::string TeacherAdd::HandleRequestThrow( const userver::server::http::HttpReq
     }
 
     const auto& email_or_username{ request_body[ kEmailOrUsername ].As< std::string >() };
-    const auto& rank_name{ request_body[ kRankName ].As< std::string >() };
+    const auto& level{ request_body[ kLevel ].As< std::string >() };
 
     const pg::PgDao pg_dao{ pg_cluster_ };
+
     const auto get_user_id_result{ pg_dao.getUserIdViaEmailOrUsername( email_or_username ) };
 
     if ( get_user_id_result.IsEmpty() )
@@ -89,24 +58,24 @@ std::string TeacherAdd::HandleRequestThrow( const userver::server::http::HttpReq
 
     const auto user_id{ get_user_id_result.AsSingleRow< int >() };
 
-    const auto get_rank_id_result{ pg_dao.getRankId( rank_name ) };
+    const auto get_admin_level_id{ pg_dao.getAdminLevelId( level ) };
 
-    if ( get_rank_id_result.IsEmpty() )
+    if ( get_admin_level_id.IsEmpty() )
     {
         userver::formats::json::ValueBuilder response;
-        response[ "error" ] = "rankDoesntExist";
+        response[ "error" ] = "userDoesntExist";
 
         request.SetResponseStatus( userver::server::http::HttpStatus::kBadRequest );
         return userver::formats::json::ToString( response.ExtractValue() );
     }
 
-    const auto rank_id{ get_rank_id_result.AsSingleRow< int >() };
+    const auto admin_level_id{ get_admin_level_id.AsSingleRow< int >() };
 
-    const auto insert_teacher_query_result{ pg_dao.addTeacher( user_id, rank_id ) };
-    if ( !insert_teacher_query_result.RowsAffected() )
+    const auto insert_admin_result{ pg_dao.addAdmin( user_id, admin_level_id ) };
+    if ( !insert_admin_result.RowsAffected() )
     {
         userver::formats::json::ValueBuilder response;
-        response[ "error" ] = "teacherAlreadyExists";
+        response[ "error" ] = "adminAlreadyExists";
 
         request.SetResponseStatus( userver::server::http::HttpStatus::kConflict );
         return userver::formats::json::ToString( response.ExtractValue() );

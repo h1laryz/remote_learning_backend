@@ -33,6 +33,7 @@
 #include "api/handlers/subject_groups_get.hpp"
 #include "api/handlers/teacher_assignments_get.hpp"
 #include "api/handlers/generate_presigned_url.hpp"
+#include "api/handlers/admin/grant_admin_rules.hpp"
 
 #include "api/handlers/pipelines/CorsPipelineBuilder.hpp"
 
@@ -79,7 +80,8 @@ int main( int argc, const char* const argv[] )
                                     .Append< rl::handlers::SubjectGroupMessagesGet >()
                                     .Append< rl::handlers::MessageSend >()
                                     .Append< rl::handlers::SubjectGroupsGet >()
-                                    .Append< rl::handlers::GeneratePresignedUrl >();
+                                    .Append< rl::handlers::GeneratePresignedUrl >()
+                                    .Append< rl::handlers::GrantAdminRules >();
 
     Aws::SDKOptions options;
     Aws::InitAPI( options );

@@ -23,6 +23,18 @@ CREATE TABLE IF NOT EXISTS university.users
 CREATE UNIQUE INDEX users_lower_case_username ON university.users (LOWER(username));
 CREATE UNIQUE INDEX users_lower_case_email ON university.users (LOWER(email));
 
+CREATE TABLE IF NOT EXISTS university.admin_levels
+(
+    id SERIAL NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL CHECK(char_length(name) > 1)
+);
+
+CREATE TABLE IF NOT EXISTS university.admins
+(
+    id INT NOT NULL PRIMARY KEY REFERENCES university.users(id),
+    level_id INT NOT NULL REFERENCES university.admin_levels(id)
+);
+
 CREATE SCHEMA IF NOT EXISTS faculty;
 CREATE TABLE IF NOT EXISTS faculty.faculties
 (

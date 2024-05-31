@@ -82,30 +82,48 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
         return userver::formats::json::ToString( response.ExtractValue() );
     }
 
-    const auto user_id = opt_user_id.value();
-
-    std::string role;
-
     const pg::PgDao pg_dao{ pg_cluster_ };
 
-    if ( pg_dao.isUserStudent( user_id ) )
-    {
-        role = "student";
-    }
+    const auto user_id = opt_user_id.value();
 
-    if ( pg_dao.isUserTeacher( user_id ) )
+    const auto role = [pg_dao, user_id]() -> std::string
     {
-        role = "teacher";
-    }
+        if ( pg_dao.isUserStudent( user_id ) )
+        {
+            return "student";
+        }
+        if ( pg_dao.isUserTeacher( user_id ) )
+        {
+            return "teacher";
+        }
+        if ( pg_dao.isUserAdmin( user_id ) )
+        {
+            return "admin";
+        }
+        return "";
+    }();
 
-    const auto token{ jwt::create()
-                          .set_type( "JWT" )
-                          .set_id( "rsa-create-example" )
-                          .set_issued_now()
-                          .set_expires_in( std::chrono::seconds{ 36000 } )
-                          .set_payload_claim( "role", jwt::claim( role ) )
-                          .set_payload_claim("user_id", jwt::claim(std::to_string(user_id)))
-                          .sign( jwt::algorithm::hs256( "secret" ) ) };
+    const auto token = [pg_dao, user_id, role]() -> std::string
+    {
+        const auto level = [pg_dao, user_id, role]() -> std::string
+        {
+            if (role == "admin")
+            {
+                return pg_dao.getAdminLevel(user_id).AsSingleRow<std::string>();
+            }
+            return {};
+        }();
+
+        return jwt::create()
+            .set_type( "JWT" )
+            .set_id( "rsa-create-example" )
+            .set_issued_now()
+            .set_expires_in( std::chrono::seconds{ 36000 } )
+            .set_payload_claim( "role", jwt::claim( role ) )
+            .set_payload_claim("level", jwt::claim( level ) )
+            .set_payload_claim("user_id", jwt::claim(std::to_string(user_id)))
+            .sign( jwt::algorithm::hs256( "secret" ) );
+    }();
 
     const auto pg_query_save_token{
         "INSERT INTO auth.tokens(token, user_id) "

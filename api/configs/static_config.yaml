@@ -202,6 +202,11 @@ components_manager:
             task_processor: main-task-processor
             method: GET,OPTIONS
 
+        handler-grant-admin-rules:
+            path: /v1/admin/grant
+            task_processor: main-task-processor
+            method: POST,OPTIONS
+
         #postgres-db-1:
         #    dbconnection: $dbconnection
         #    blocking_task_processor: fs-task-processor

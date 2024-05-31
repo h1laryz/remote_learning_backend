@@ -63,6 +63,18 @@ public:
         return !result.IsEmpty() && result.AsSingleRow< int >() == 1;
     }
 
+    [[nodiscard]] bool isUserAdmin( int user_id ) const
+    {
+        const auto get_is_admin_query{ "SELECT 1 FROM university.admins WHERE id = $1;" };
+
+        const auto result{ pg_cluster_->Execute(
+            userver::storages::postgres::ClusterHostType::kMaster,
+            get_is_admin_query,
+            user_id ) };
+
+        return !result.IsEmpty() && result.AsSingleRow< int >() == 1;
+    }
+
     [[nodiscard]] bool isUserStudent( int user_id ) const
     {
         const auto query{ "SELECT 1 FROM department.students WHERE id = $1;" };
@@ -85,6 +97,20 @@ public:
         return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
                                      get_faculty_query,
                                      name );
+    }
+
+    [[nodiscard]] auto getAdminLevel( int user_id ) const
+    {
+        const auto get_faculty_query{
+            "SELECT name FROM university.admins "
+            "JOIN university.users ON university.users.id = university.admins.id "
+            "JOIN university.admin_levels ON university.admins.level_id = university.admin_levels.id "
+            "WHERE university.admins.id = $1;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     get_faculty_query,
+                                     user_id );
     }
 
     [[nodiscard]] auto connectTeacherToFaculty( int teacher_id, int faculty_id ) const
@@ -151,6 +177,32 @@ public:
                                      add_student_query,
                                      user_id,
                                      department_group_id );
+    }
+
+    [[nodiscard]] auto getAdminLevelId( std::string_view level ) const
+    {
+        const auto get_admin_level_id{
+            "SELECT id FROM university.admin_levels "
+            "WHERE LOWER(name) = LOWER($1);"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     get_admin_level_id,
+                                     level );
+    }
+
+    [[nodiscard]] auto addAdmin( int user_id, int admin_level_id ) const
+    {
+        const auto add_student_query{
+            "INSERT INTO university.admins (id, level_id) "
+            "VALUES ($1, $2) "
+            "ON CONFLICT DO NOTHING;"
+        };
+
+        return pg_cluster_->Execute( userver::storages::postgres::ClusterHostType::kMaster,
+                                     add_student_query,
+                                     user_id,
+                                     admin_level_id );
     }
 
     [[nodiscard]] auto getUniversityId( std::string_view name ) const
