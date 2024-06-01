@@ -10,6 +10,7 @@
 #include "api/handlers/admin/department_add.hpp"
 #include "api/handlers/admin/department_group_add.hpp"
 #include "api/handlers/admin/faculty_add.hpp"
+#include "api/handlers/admin/grant_admin_rules.hpp"
 #include "api/handlers/admin/student_add.hpp"
 #include "api/handlers/admin/student_to_existing_subject_group_add.hpp"
 #include "api/handlers/admin/subject_add.hpp"
@@ -24,6 +25,7 @@
 #include "api/handlers/assignment_mark_add.hpp"
 #include "api/handlers/assignment_solution_add.hpp"
 #include "api/handlers/assignment_solution_content_get.hpp"
+#include "api/handlers/generate_presigned_url.hpp"
 #include "api/handlers/login.hpp"
 #include "api/handlers/message_send.hpp"
 #include "api/handlers/register.hpp"
@@ -32,8 +34,6 @@
 #include "api/handlers/subject_group_messages_get.hpp"
 #include "api/handlers/subject_groups_get.hpp"
 #include "api/handlers/teacher_assignments_get.hpp"
-#include "api/handlers/generate_presigned_url.hpp"
-#include "api/handlers/admin/grant_admin_rules.hpp"
 
 #include "api/handlers/pipelines/CorsPipelineBuilder.hpp"
 

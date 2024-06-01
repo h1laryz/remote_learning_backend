@@ -86,7 +86,7 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
 
     const auto user_id = opt_user_id.value();
 
-    const auto role = [pg_dao, user_id]() -> std::string
+    const auto role = [ pg_dao, user_id ]() -> std::string
     {
         if ( pg_dao.isUserStudent( user_id ) )
         {
@@ -103,13 +103,13 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
         return "";
     }();
 
-    const auto token = [pg_dao, user_id, role]() -> std::string
+    const auto token = [ pg_dao, user_id, role ]() -> std::string
     {
-        const auto level = [pg_dao, user_id, role]() -> std::string
+        const auto level = [ pg_dao, user_id, role ]() -> std::string
         {
-            if (role == "admin")
+            if ( role == "admin" )
             {
-                return pg_dao.getAdminLevel(user_id).AsSingleRow<std::string>();
+                return pg_dao.getAdminLevel( user_id ).AsSingleRow< std::string >();
             }
             return {};
         }();
@@ -120,8 +120,8 @@ std::string Login::HandleRequestThrow( const userver::server::http::HttpRequest&
             .set_issued_now()
             .set_expires_in( std::chrono::seconds{ 36000 } )
             .set_payload_claim( "role", jwt::claim( role ) )
-            .set_payload_claim("level", jwt::claim( level ) )
-            .set_payload_claim("user_id", jwt::claim(std::to_string(user_id)))
+            .set_payload_claim( "level", jwt::claim( level ) )
+            .set_payload_claim( "user_id", jwt::claim( std::to_string( user_id ) ) )
             .sign( jwt::algorithm::hs256( "secret" ) );
     }();
 

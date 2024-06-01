@@ -14,7 +14,7 @@ const auto kSurname{ "surname" };
 const auto kLastName{ "last_name" };
 const auto kTimestamp{ "timestamp" };
 const auto kContent{ "content" };
-const auto kUserId { "user_id" };
+const auto kUserId{ "user_id" };
 using MessageRow = std::tuple< std::string, std::string, std::string, std::string, int >;
 } // namespace
 
@@ -93,7 +93,7 @@ SubjectGroupMessagesGet::HandleRequestThrow( const userver::server::http::HttpRe
         message_json[ kLastName ]  = last_name;
         message_json[ kTimestamp ] = timestamp;
         message_json[ kContent ]   = content;
-        message_json[kUserId] = sender_user_id;
+        message_json[ kUserId ]    = sender_user_id;
 
         response.PushBack( std::move( message_json ) );
     }

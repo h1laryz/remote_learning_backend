@@ -16,7 +16,7 @@ class GrantAdminRules final : public userver::server::handlers::HttpHandlerBase
 {
 public:
     GrantAdminRules( const userver::components::ComponentConfig& config,
-                   const userver::components::ComponentContext& context );
+                     const userver::components::ComponentContext& context );
 
 public:
     static constexpr std::string_view kName = "handler-grant-admin-rules";

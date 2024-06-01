@@ -30,34 +30,35 @@ std::string SubjectAdd::HandleRequestThrow( const userver::server::http::HttpReq
 {
     const auto& jwt{ request.GetHeader( userver::http::headers::kAuthorization ) };
 
-    auto decodedJwt = jwt::decode(jwt);
+    auto decodedJwt = jwt::decode( jwt );
 
-    auto verifier = jwt::verify()
-                        .allow_algorithm(jwt::algorithm::hs256{"secret"});
+    auto verifier = jwt::verify().allow_algorithm( jwt::algorithm::hs256{ "secret" } );
 
-    verifier.verify(decodedJwt);
-    const auto payload { decodedJwt.get_payload_json() };
+    verifier.verify( decodedJwt );
+    const auto payload{ decodedJwt.get_payload_json() };
 
-    const auto roleIt { payload.find("role") };
-    if (roleIt != payload.cend() || roleIt->second.to_str() != "admin")
+    const auto roleIt{ payload.find( "role" ) };
+    if ( roleIt == payload.cend() || roleIt->second.to_str() != "admin" )
     {
         request.SetResponseStatus( userver::server::http::HttpStatus::kUnauthorized );
 
         userver::formats::json::ValueBuilder response;
         response[ "error" ] = "userIsNotAdmin";
 
-        return userver::formats::json::ToString(response.ExtractValue());
+        return userver::formats::json::ToString( response.ExtractValue() );
     }
 
-    const auto levelIt { payload.find("level") };
-    if (levelIt != payload.cend() || roleIt->second.to_str() != "full" || roleIt->second.to_str() != "faculty" || roleIt->second.to_str() != "department")
+    const auto levelIt{ payload.find( "level" ) };
+    if ( levelIt == payload.cend()
+         || ( levelIt->second.to_str() != "full" && levelIt->second.to_str() != "faculty"
+              && levelIt->second.to_str() != "department" ) )
     {
         request.SetResponseStatus( userver::server::http::HttpStatus::kUnauthorized );
 
         userver::formats::json::ValueBuilder response;
         response[ "error" ] = "noAccess";
 
-        return userver::formats::json::ToString(response.ExtractValue());
+        return userver::formats::json::ToString( response.ExtractValue() );
     }
 
     const auto request_body{ userver::formats::json::FromString( request.RequestBody() ) };

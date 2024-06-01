@@ -16,7 +16,7 @@ constexpr std::string_view kLevel{ "level" };
 namespace rl::handlers
 {
 GrantAdminRules::GrantAdminRules( const userver::components::ComponentConfig& config,
-                              const userver::components::ComponentContext& context )
+                                  const userver::components::ComponentContext& context )
     : userver::server::handlers::HttpHandlerBase{ config, context }
     , pg_cluster_{
         context.FindComponent< userver::components::Postgres >( "auth-database" ).GetCluster()
@@ -25,7 +25,7 @@ GrantAdminRules::GrantAdminRules( const userver::components::ComponentConfig& co
 }
 
 std::string GrantAdminRules::HandleRequestThrow( const userver::server::http::HttpRequest& request,
-                                               userver::server::request::RequestContext& ) const
+                                                 userver::server::request::RequestContext& ) const
 {
     const auto request_body{ userver::formats::json::FromString( request.RequestBody() ) };
 

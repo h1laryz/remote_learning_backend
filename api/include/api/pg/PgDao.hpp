@@ -104,7 +104,8 @@ public:
         const auto get_faculty_query{
             "SELECT name FROM university.admins "
             "JOIN university.users ON university.users.id = university.admins.id "
-            "JOIN university.admin_levels ON university.admins.level_id = university.admin_levels.id "
+            "JOIN university.admin_levels ON university.admins.level_id = "
+            "university.admin_levels.id "
             "WHERE university.admins.id = $1;"
         };
 

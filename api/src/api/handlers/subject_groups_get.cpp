@@ -9,7 +9,7 @@
 
 namespace
 {
-using GroupRow = std::tuple<std::string>;
+using GroupRow = std::tuple< std::string >;
 } // namespace
 
 namespace rl::handlers
@@ -58,7 +58,7 @@ std::string SubjectGroupsGet::HandleRequestThrow( const userver::server::http::H
 
         for ( const auto subject_group : subject_groups )
         {
-            const auto [subject_name] = subject_group;
+            const auto [ subject_name ] = subject_group;
 
             response.PushBack( subject_name );
         }
@@ -77,7 +77,7 @@ std::string SubjectGroupsGet::HandleRequestThrow( const userver::server::http::H
 
         for ( const auto subject_group : subject_groups )
         {
-            const auto [subject_name] = subject_group;
+            const auto [ subject_name ] = subject_group;
 
             response.PushBack( subject_name );
         }

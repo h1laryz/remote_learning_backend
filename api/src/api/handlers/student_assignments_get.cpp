@@ -86,7 +86,7 @@ StudentAssignmentsGet::HandleRequestThrow( const userver::server::http::HttpRequ
                 student_assignment_solution_result.AsSingleRow< AssignmentSolutionRow >(
                     userver::storages::postgres::kRowTag );
             json_obj[ "solution" ][ kS3Location ] = solution_s3_key;
-            json_obj["assignment_date"] = assignment_date_time;
+            json_obj[ "assignment_date" ]         = assignment_date_time;
 
             if ( mark.has_value() )
             {

@@ -97,7 +97,7 @@ std::string StudentDiaryGet::HandleRequestThrow( const userver::server::http::Ht
                 student_assignment_solution_result.AsSingleRow< AssignmentSolutionRow >(
                     userver::storages::postgres::kRowTag );
 
-            json_obj["assignment_date_time"] = assignment_date_time;
+            json_obj[ "assignment_date_time" ] = assignment_date_time;
             // Если есть оценка, добавляем её в JSON объект
             if ( mark.has_value() )
             {
