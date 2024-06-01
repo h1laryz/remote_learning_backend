@@ -48,14 +48,14 @@ services:
           - postgres
 
     api:
-        container_name: remote-learning-chat
-        image: ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
+        container_name: remote-learning-api
+        build:
+          dockerfile: ./Dockerfile
         privileged: true
         environment:
           - POSTGRES_DB=postgres
           - POSTGRES_USER=postgres
           - POSTGRES_PASSWORD=postgres
-          - PREFIX=${PREFIX:-~/.local}
           - CCACHE_DIR=/remote_learning_backend/.ccache
           - CORES_DIR=/cores
           - BUILD_CONFIGURATION=$REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION

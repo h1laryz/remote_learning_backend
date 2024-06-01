@@ -1,14 +1,14 @@
-apt-get update -y 
-apt-get upgrade -y
+sudo apt-get update -y
+sudo apt-get upgrade -y
 
-apt-get install -y sudo git make cmake gcc g++
+sudo apt-get install -y git make cmake gcc g++
 
 cd && \
 git clone https://github.com/Thalhammer/jwt-cpp && \
 cd jwt-cpp && \
 mkdir build && \
 cd build && \
-cmake .. -G Ninja && \
+cmake .. && \
 sudo make install && \
 cd && \
 rm -rf jwt-cpp 
@@ -18,7 +18,16 @@ git clone --recurse-submodules https://github.com/aws/aws-sdk-cpp && \
 cd aws-sdk-cpp && \
 mkdir build && \
 cd build && \
-cmake .. -G Ninja && \
+cmake .. \
+-DCMAKE_BUILD_TYPE=Release \
+-DBUILD_ONLY="s3" && \
+sudo make install
+
+cd && \
+git clone --recurse-submodules https://github.com/Neargye/magic_enum && \
+cd magic_enum && \
+mkdir build && \
+cd build && \
+cmake .. \
 -DCMAKE_BUILD_TYPE=Release && \
--DBUILD_ONLY="s3" \
 sudo make install

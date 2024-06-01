@@ -1,5 +1,12 @@
-FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
+    FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
 
-WORKDIR /app
-COPY ~/remote_learning_backend/scripts .
+WORKDIR /install
+
+RUN apt-get -y update && apt-get -y upgrade
+RUN apt-get install -y sudo
+
+COPY scripts scripts
+
 RUN ./scripts/install_env.sh
+
+EXPOSE "8080"

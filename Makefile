@@ -30,7 +30,7 @@ build_release/CMakeCache.txt: cmake-release
 # Build using cmake
 .PHONY: build-debug build-release
 build-debug build-release: build-%: build_%/CMakeCache.txt
-	cmake --build build_$* -j $(NPROCS) --target remote_learning_backend
+	cmake --build build_$* -j $(NPROCS) --target remote_learning_backend_api
 
 # Test
 .PHONY: test-debug test-release
@@ -43,7 +43,7 @@ test-debug test-release: test-%: build-%
 # Start the service (via testsuite service runner)
 .PHONY: service-start-debug service-start-release
 service-start-debug service-start-release: service-start-%: build-%
-	cmake --build build_$* -v --target start-remote_learning_backend
+	cmake --build build_$* -v --target start-remote_learning_backend_api
 
 # Cleanup data
 .PHONY: clean-debug clean-release
@@ -59,7 +59,7 @@ dist-clean:
 # Install
 .PHONY: install-debug install-release
 install-debug install-release: install-%: build-%
-	cmake --install build_$* -v --component remote_learning_backend
+	cmake --install build_$* -v --component remote_learning_backend_api
 
 .PHONY: install
 install: install-release
@@ -74,8 +74,6 @@ format:
 .PHONY: docker-start-debug docker-start-release
 docker-start-debug docker-start-release: docker-start-%:
 	REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION=$* $(DOCKER_COMPOSE) up
-
-
 
 # Start targets makefile in docker environment
 .PHONY: docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release
