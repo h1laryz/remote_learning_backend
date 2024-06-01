@@ -31,3 +31,6 @@ cd build && \
 cmake .. \
 -DCMAKE_BUILD_TYPE=Release && \
 sudo make install
+
+echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/aws-sdk.conf
+sudo ldconfig

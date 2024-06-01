@@ -1,4 +1,4 @@
-    FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
+FROM ghcr.io/userver-framework/ubuntu-22.04-userver-pg:latest
 
 WORKDIR /install
 
