@@ -113,7 +113,8 @@ std::string AssignmentAdd::HandleRequestThrow( const userver::server::http::Http
     }
 
     userver::formats::json::ValueBuilder response;
-    response[ "status" ] = "success";
+    response[ "status" ]      = "success";
+    response[ "s3_location" ] = s3_key_location.value();
     return userver::formats::json::ToString( response.ExtractValue() );
 }
 

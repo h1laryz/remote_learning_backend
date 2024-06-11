@@ -23,19 +23,6 @@ services:
         networks:
           - postgres
 
-    pgadmin:
-        container_name: remote-learning-pgadmin
-        image: dpage/pgadmin4
-        environment:
-          - PGADMIN_DEFAULT_EMAIL=mail@domain.com
-          - PGADMIN_DEFAULT_PASSWORD=password
-        ports:
-          - 27016:80
-        depends_on:
-          - postgres
-        networks:
-          - postgres
-
     flyway:
         container_name: remote-learning-flyway
         image: flyway/flyway
