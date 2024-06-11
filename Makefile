@@ -76,9 +76,9 @@ docker-start-debug docker-start-release: docker-start-%:
 	REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION=$* $(DOCKER_COMPOSE) up
 
 # Start targets makefile in docker environment
-.PHONY: docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release
-docker-cmake-debug docker-build-debug docker-test-debug docker-clean-debug docker-install-debug docker-cmake-release docker-build-release docker-test-release docker-clean-release docker-install-release: docker-%:
-	$(DOCKER_COMPOSE) run --rm remote-learning-backend-container make $*
+.PHONY: docker-build-debug docker-build-release
+docker-cmake-debug docker-build-debug: docker-build-%:
+	REMOTE_LEARNING_DOCKER_BUILD_CONFIGURATION=$* $(DOCKER_COMPOSE) run --rm api make $*
 
 # Stop docker container and remove PG data
 .PHONY: docker-clean-data
